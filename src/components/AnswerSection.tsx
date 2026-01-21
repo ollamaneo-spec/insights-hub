@@ -191,7 +191,7 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
   const [instruction, setInstruction] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [editorContent, setEditorContent] = useState("");
-  const [aiEditedText, setAiEditedText] = useState(false); // Track if AI edited
+  const [aiEditedText, setAiEditedText] = useState(false);
   const prevIsEditingRef = useRef(isEditing);
 
   // Convert segments to HTML for editor with proper colors
@@ -199,10 +199,7 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     return segments
       .map((seg) => {
         const color = SEGMENT_COLORS[seg.type];
-        // Preserve line breaks as <br> tags
         const textWithBreaks = seg.text.replace(/\n/g, "<br>");
-        // TipTap preserves color reliably via the Color/TextStyle mark (span style="color"),
-        // but may drop inline styles on <p> depending on schema.
         return `<p><span style="color: ${color};">${textWithBreaks}</span></p>`;
       })
       .join("");
@@ -225,6 +222,15 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     
     prevIsEditingRef.current = isEditing;
   }, [isEditing, segmentsToHtml, editorContent]);
+
+  // Autosave handler - saves segments from current editor content
+  const handleAutoSave = useCallback((content: string) => {
+    const newSegments = parseHtmlToSegments(content);
+    if (newSegments.length > 0) {
+      setSegments(newSegments);
+      console.log("Content autosaved to segments");
+    }
+  }, []);
 
   const getSegmentClassName = (type: SegmentType): string => {
     switch (type) {
@@ -318,11 +324,11 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     return (
       <div className="h-full flex flex-col">
         <RichTextEditor
-          // IMPORTANT: while editing we must feed back the live editor HTML,
-          // otherwise the editor gets reset and loses paragraphs/colors.
           content={editorContent || segmentsToHtml}
           onChange={handleEditorChange}
+          onAutoSave={handleAutoSave}
           autoColorUserText={true}
+          autoSaveDelay={1500}
         />
       </div>
     );
