@@ -34,15 +34,7 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         defaultHeight={180}
       >
         <div className="text-foreground whitespace-pre-line text-sm leading-relaxed">
-          {isEditing ? (
-            <textarea
-              value={appealText}
-              onChange={(e) => setAppealText(e.target.value)}
-              className="w-full min-h-[120px] p-3 text-sm text-foreground bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 leading-relaxed transition-colors"
-            />
-          ) : (
-            appealText
-          )}
+          {appealText}
         </div>
       </SectionBlock>
 
@@ -54,15 +46,7 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         defaultHeight={100}
       >
         <div className="text-foreground text-sm leading-relaxed">
-          {isEditing ? (
-            <textarea
-              value={essenceText}
-              onChange={(e) => setEssenceText(e.target.value)}
-              className="w-full min-h-[50px] p-3 text-sm text-foreground bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 leading-relaxed transition-colors"
-            />
-          ) : (
-            essenceText
-          )}
+          {essenceText}
         </div>
       </SectionBlock>
 
@@ -74,7 +58,7 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         resizable
         defaultHeight={280}
       >
-        <AnswerSection />
+        <AnswerSection isEditing={isEditing} />
       </SectionBlock>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Save, Pencil } from "lucide-react";
+import RichTextEditor from "./RichTextEditor";
 
 // Text segment types for color coding
 type SegmentType = "npa" | "ai" | "user";
@@ -91,7 +92,11 @@ const initialSegments: TextSegment[] = [
   },
 ];
 
-const AnswerSection = () => {
+interface AnswerSectionProps {
+  isEditing?: boolean;
+}
+
+const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
   const [segments, setSegments] = useState<TextSegment[]>(initialSegments);
   const [selectedText, setSelectedText] = useState("");
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null);
@@ -99,6 +104,22 @@ const AnswerSection = () => {
   const [editedText, setEditedText] = useState("");
   const [instruction, setInstruction] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [editorContent, setEditorContent] = useState("");
+
+  // Convert segments to HTML for editor
+  const segmentsToHtml = useMemo(() => {
+    return segments
+      .map((seg) => {
+        const colorClass =
+          seg.type === "npa"
+            ? "color: rgb(37, 99, 235);"
+            : seg.type === "ai"
+            ? "color: rgb(220, 38, 38);"
+            : "color: rgb(0, 0, 0);";
+        return `<p style="${colorClass}">${seg.text.replace(/\n/g, "<br>")}</p>`;
+      })
+      .join("");
+  }, [segments]);
 
   const getSegmentClassName = (type: SegmentType): string => {
     switch (type) {
@@ -114,6 +135,8 @@ const AnswerSection = () => {
   };
 
   const handleTextSelection = useCallback(() => {
+    if (isEditing) return; // Disable selection in edit mode
+
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
 
@@ -134,7 +157,7 @@ const AnswerSection = () => {
     setSelectedSegmentId(segmentId);
     setEditedText(selectedStr);
     setIsDialogOpen(true);
-  }, []);
+  }, [isEditing]);
 
   const handleAIEdit = async () => {
     setIsProcessing(true);
@@ -176,6 +199,20 @@ const AnswerSection = () => {
     setEditedText("");
     setInstruction("");
   };
+
+  const handleEditorChange = (content: string) => {
+    setEditorContent(content);
+  };
+
+  // Show rich text editor in edit mode
+  if (isEditing) {
+    return (
+      <RichTextEditor
+        content={segmentsToHtml}
+        onChange={handleEditorChange}
+      />
+    );
+  }
 
   return (
     <>
