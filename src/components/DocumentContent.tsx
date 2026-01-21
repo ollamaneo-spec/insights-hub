@@ -1,9 +1,10 @@
 const DocumentContent = () => {
   return (
-    <div className="space-y-4 text-sm leading-relaxed text-foreground">
-      <section>
-        <h3 className="font-semibold text-base mb-3">Текст обращения:</h3>
-        <p className="text-muted-foreground mb-4">
+    <div className="space-y-0 text-sm leading-relaxed text-foreground">
+      {/* Текст обращения */}
+      <section className="section-block">
+        <h3 className="section-title">Текст обращения:</h3>
+        <p className="text-muted-foreground mb-3">
           В связи с вступлением в силу новых обязательных и дополнительных реквизитов кассового чека, утвержденных приказом ФНС от 26.03.2025 №{" "}
           <span className="highlight-yellow px-1 rounded">ЕД-7-20/336@</span>{" "}
           и вступающих в силу в несколько этапов в зависимости от реализуемой продукции, просим предоставить разъяснения по следующим вопросам:
@@ -28,36 +29,30 @@ const DocumentContent = () => {
         </ol>
       </section>
 
-      <section className="mt-6">
-        <h3 className="font-semibold text-base mb-3">Суть обращения:</h3>
-        <div className="space-y-4 text-muted-foreground">
+      {/* Суть обращения */}
+      <section className="section-block">
+        <h3 className="section-title">Суть обращения:</h3>
+        <div className="text-muted-foreground">
           <p>
             об обязательности применения новых реквизитов кассового чека (теги 1125 и 1230) для онлайн-платежей и безналичных расчетов.
           </p>
-          
-          <div className="bg-highlight-green/30 p-4 rounded-lg border-l-4 border-primary">
-            <p>
-              Согласно с пунктом 5 приказа 12{" "}
-              <span className="font-medium text-foreground">Федеральный закон от 22.05.2003 № 54-ФЗ</span>{" "}
-              «О применении контрольно-кассовой техники при осуществлении расчетов в Российской Федерации» и Законом «О Федеральном законе № 54-ФЗ», пользователями при осуществлении расчетов в безналичном порядке, исключающих возможность непосредственного взаимодействия покупателя (клиента) с пользователями или уполномоченными им лицами, либо автоматическими устройствами для расчетов с применением устройств, применяемых контроля.
-            </p>
-          </div>
+        </div>
+      </section>
 
+      {/* Ответ */}
+      <section className="section-block">
+        <h3 className="section-title">Ответ:</h3>
+        <div className="text-muted-foreground space-y-3">
+          <p>
+            Согласно с пунктом 5 приказа 12{" "}
+            <span className="font-medium text-foreground">Федеральный закон от 22.05.2003 № 54-ФЗ</span>{" "}
+            «О применении контрольно-кассовой техники при осуществлении расчетов в Российской Федерации» и Законом «О Федеральном законе № 54-ФЗ», пользователями при осуществлении расчетов в безналичном порядке, исключающих возможность непосредственного взаимодействия покупателя (клиента) с пользователями или уполномоченными им лицами, либо автоматическими устройствами для расчетов с применением устройств, применяемых контроля.
+          </p>
           <p>
             Приказом ФНС России от 26.03.2025 №{" "}
             <span className="highlight-yellow px-1 rounded">ЕД-7-20/336@</span>{" "}
             «О внесении изменений в приложение № 2 к приказу ФНС России от 14.09.2020 № ЕД-7-20/662@» и в приложение к приказу ФНС России от 15.09.2020 № ЕД-7-20/662@ «Об утверждении дополнительных реквизитов фискальных документов и форматов фискальных документов, обязательных к использованию»...
           </p>
-        </div>
-      </section>
-      
-      <section className="mt-6">
-        <h3 className="font-semibold text-base mb-3">Рекомендации:</h3>
-        <div className="flex flex-wrap gap-2">
-          <span className="px-3 py-1.5 bg-accent rounded-full text-sm text-accent-foreground">Пункт</span>
-          <span className="px-3 py-1.5 bg-accent rounded-full text-sm text-accent-foreground">Статья</span>
-          <span className="px-3 py-1.5 bg-highlight-green rounded-full text-sm text-foreground">Сведения</span>
-          <span className="px-3 py-1.5 bg-highlight-yellow rounded-full text-sm text-foreground">Правила</span>
         </div>
       </section>
     </div>
