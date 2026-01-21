@@ -24,8 +24,8 @@ const TabPanel = ({ npaContent, qaContent }: TabPanelProps) => {
             className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">Вопрос / Ответ</span>
-            <span className="sm:hidden">Q/A</span>
+            <span className="hidden sm:inline">Вопрос/ответ из БД</span>
+            <span className="sm:hidden">Q/A БД</span>
           </TabsTrigger>
         </TabsList>
       </div>
