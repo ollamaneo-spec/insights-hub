@@ -155,24 +155,26 @@ const QAContent = () => {
 
   return (
     <div className="h-full flex flex-col p-2 gap-2">
-      {/* Вопрос из БД - с изменяемой высотой */}
+      {/* Вопрос из БД - ~30% высоты */}
       <Section 
         title="Вопрос из БД" 
         onExpand={() => setExpandedSection("question")}
         resizable
-        defaultHeight={100}
+        defaultHeight={140}
+        heightRatio={0.30}
       >
         {questionContent}
       </Section>
 
-      {/* Ответ из БД - с изменяемой высотой */}
+      {/* Ответ из БД - ~65% высоты */}
       <Section 
         title="Ответ из БД" 
         onExpand={() => setExpandedSection("answer")}
         maxHeight="max-h-none"
         className="flex-1"
         resizable
-        defaultHeight={200}
+        defaultHeight={280}
+        heightRatio={0.65}
       >
         {answerContent}
       </Section>
@@ -212,6 +214,7 @@ interface SectionProps {
   className?: string;
   resizable?: boolean;
   defaultHeight?: number;
+  heightRatio?: number;
 }
 
 const Section = ({ 
@@ -221,7 +224,8 @@ const Section = ({
   maxHeight = "max-h-28", 
   className = "",
   resizable = false,
-  defaultHeight = 120
+  defaultHeight = 120,
+  heightRatio
 }: SectionProps) => {
   const isFlexible = maxHeight === "max-h-none";
   const [height, setHeight] = useState(defaultHeight);
@@ -236,7 +240,7 @@ const Section = ({
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!isResizing.current) return;
       const deltaY = moveEvent.clientY - startY;
-      const newHeight = Math.max(60, Math.min(400, startHeight + deltaY));
+      const newHeight = Math.max(60, Math.min(500, startHeight + deltaY));
       setHeight(newHeight);
     };
 
@@ -252,16 +256,16 @@ const Section = ({
   
   return (
     <section 
-      className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col shadow-sm ${className}`}
+      className={`border border-border bg-card overflow-hidden flex flex-col ${className}`}
       style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
     >
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 flex-shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 flex-shrink-0">
         <h3 className="font-bold text-sm text-foreground tracking-tight">{title}</h3>
         {onExpand && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-md transition-colors"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-colors"
             onClick={onExpand}
             title="Открыть на всю страницу"
           >

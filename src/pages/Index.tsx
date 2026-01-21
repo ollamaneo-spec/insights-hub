@@ -90,6 +90,9 @@ const Index = () => {
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Left: Document Content - 70% */}
         <div className="flex flex-col min-w-0 w-[70%]">
+          {/* File Upload Bar */}
+          <FileUploadBar onFilesSelected={handleFilesSelected} />
+          
           {/* Document Content - scrollable area */}
           <div className="flex-1 overflow-auto min-h-0">
             <DocumentContent isEditing={isEditing} />
@@ -115,8 +118,6 @@ const Index = () => {
           `}
         >
           <div className="h-full flex flex-col w-full">
-            {/* File Upload Bar - matching right panel width */}
-            <FileUploadBar onFilesSelected={handleFilesSelected} />
             <div className="flex-1 overflow-hidden">
               <TabPanel
                 npaContent={<NPAList items={sampleNPAItems} />}
