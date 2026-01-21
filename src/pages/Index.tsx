@@ -83,16 +83,13 @@ const Index = () => {
     console.log("Файлы загружены:", Array.from(files).map(f => f.name));
   };
 
-  return (
+    return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Header />
 
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Left: Document Content - 70% */}
-        <div className="flex flex-col min-w-0 border-r border-border w-[70%]">
-          {/* File Upload Bar */}
-          <FileUploadBar onFilesSelected={handleFilesSelected} />
-          
+        <div className="flex flex-col min-w-0 w-[70%]">
           {/* Document Content - scrollable area */}
           <div className="flex-1 overflow-auto min-h-0">
             <DocumentContent isEditing={isEditing} />
@@ -112,12 +109,14 @@ const Index = () => {
         <div
           className={`
             ${isSidePanelOpen ? "w-full md:w-[30%]" : "w-0"} 
-            flex-shrink-0 transition-all duration-300 overflow-hidden
+            flex-shrink-0 transition-all duration-300 overflow-hidden border-l border-border
             fixed md:relative inset-y-0 right-0 z-20 bg-card md:bg-transparent
             ${isSidePanelOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
           `}
         >
           <div className="h-full flex flex-col w-full">
+            {/* File Upload Bar - matching right panel width */}
+            <FileUploadBar onFilesSelected={handleFilesSelected} />
             <div className="flex-1 overflow-hidden">
               <TabPanel
                 npaContent={<NPAList items={sampleNPAItems} />}

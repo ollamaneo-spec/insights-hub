@@ -9,11 +9,11 @@ interface TabPanelProps {
 const TabPanel = ({ npaContent, qaContent }: TabPanelProps) => {
   return (
     <Tabs defaultValue="npa" className="h-full flex flex-col">
-      <div className="border-b border-border bg-muted/30 px-2 py-1.5">
-        <TabsList className="grid w-full grid-cols-2 bg-muted h-8">
+      <div className="border-b border-border bg-muted/20 px-3 py-2">
+        <TabsList className="grid w-full grid-cols-2 bg-muted/80 h-9 p-1 rounded-lg">
           <TabsTrigger 
             value="npa" 
-            className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="gap-2 text-xs font-medium rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
           >
             <FileText className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Используемые НПА</span>
@@ -21,7 +21,7 @@ const TabPanel = ({ npaContent, qaContent }: TabPanelProps) => {
           </TabsTrigger>
           <TabsTrigger 
             value="qa"
-            className="gap-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="gap-2 text-xs font-medium rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all"
           >
             <MessageSquare className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Вопрос/ответ из БД</span>

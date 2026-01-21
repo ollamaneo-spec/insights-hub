@@ -252,16 +252,16 @@ const Section = ({
   
   return (
     <section 
-      className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}
+      className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col shadow-sm ${className}`}
       style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
     >
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40 flex-shrink-0">
-        <h3 className="font-bold text-sm text-foreground">{title}</h3>
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 flex-shrink-0">
+        <h3 className="font-bold text-sm text-foreground tracking-tight">{title}</h3>
         {onExpand && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-md transition-colors"
             onClick={onExpand}
             title="Открыть на всю страницу"
           >
@@ -270,14 +270,14 @@ const Section = ({
         )}
       </div>
       <ScrollArea className="flex-1 min-h-0">
-        <div className="p-2">{children}</div>
+        <div className="p-3">{children}</div>
       </ScrollArea>
       {resizable && !isFlexible && (
         <div 
-          className="h-1.5 bg-muted/60 hover:bg-primary/20 cursor-ns-resize flex items-center justify-center border-t border-border transition-colors"
+          className="h-2 bg-muted/40 hover:bg-primary/10 cursor-ns-resize flex items-center justify-center border-t border-border/50 transition-colors"
           onMouseDown={handleMouseDown}
         >
-          <GripHorizontal className="h-2.5 w-2.5 text-muted-foreground" />
+          <GripHorizontal className="h-2.5 w-2.5 text-muted-foreground/60" />
         </div>
       )}
     </section>

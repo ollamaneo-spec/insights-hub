@@ -24,21 +24,21 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
   );
 
   return (
-    <div className="flex flex-col h-full p-4 gap-3">
+    <div className="flex flex-col h-full p-4 gap-4">
       {/* Текст обращения - с ID обращения и изменяемой высотой */}
       <SectionBlock 
         title="Текст обращения" 
         maxHeight="max-h-36" 
         stickyLabel="ID обращения: ОБР-2025-001847"
         resizable
-        defaultHeight={160}
+        defaultHeight={180}
       >
-        <div className="text-foreground whitespace-pre-line text-base leading-relaxed">
+        <div className="text-foreground whitespace-pre-line text-sm leading-relaxed">
           {isEditing ? (
             <textarea
               value={appealText}
               onChange={(e) => setAppealText(e.target.value)}
-              className="w-full min-h-[120px] p-3 text-base text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+              className="w-full min-h-[120px] p-3 text-sm text-foreground bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 leading-relaxed transition-colors"
             />
           ) : (
             appealText
@@ -53,12 +53,12 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         resizable
         defaultHeight={100}
       >
-        <div className="text-foreground text-base leading-relaxed">
+        <div className="text-foreground text-sm leading-relaxed">
           {isEditing ? (
             <textarea
               value={essenceText}
               onChange={(e) => setEssenceText(e.target.value)}
-              className="w-full min-h-[50px] p-3 text-base text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+              className="w-full min-h-[50px] p-3 text-sm text-foreground bg-background border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 leading-relaxed transition-colors"
             />
           ) : (
             essenceText
@@ -72,7 +72,7 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         maxHeight="max-h-none" 
         className="flex-1 min-h-0"
         resizable
-        defaultHeight={250}
+        defaultHeight={280}
       >
         <AnswerSection />
       </SectionBlock>
