@@ -24,7 +24,7 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
   );
 
   return (
-    <div className="flex flex-col h-full p-4 gap-4">
+    <div className="flex flex-col h-full px-4 py-1 gap-0">
       {/* Текст обращения - с ID обращения и изменяемой высотой */}
       <SectionBlock 
         title="Текст обращения" 

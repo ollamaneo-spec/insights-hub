@@ -21,7 +21,7 @@ const FileUploadBar = ({ onFilesSelected }: FileUploadBarProps) => {
   };
 
   return (
-    <div className="border-b border-border bg-muted/20 px-3 py-2 shrink-0">
+    <div className="border-b border-border bg-muted/20 px-3 py-1 shrink-0">
       <input
         type="file"
         ref={fileInputRef}
