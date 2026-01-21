@@ -99,20 +99,55 @@ const initialSegments: TextSegment[] = [
   },
 ];
 
-// Parse HTML content back to segments
+// Parse HTML content back to segments (preserve paragraphs + detect color reliably)
 const parseHtmlToSegments = (html: string): TextSegment[] => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const body = doc.body;
-  
+
   const segments: TextSegment[] = [];
   let segmentIndex = 0;
-  
-  // Process all paragraph elements
+
+  const extractInlineColor = (el: Element | null): string => {
+    if (!el) return "";
+    const style = (el as HTMLElement).getAttribute("style") || "";
+    // match: color: ...;
+    const match = style.match(/color\s*:\s*([^;]+);?/i);
+    return (match?.[1] || "").trim();
+  };
+
+  const detectTypeFromColor = (raw: string): SegmentType => {
+    const c = raw.toLowerCase();
+
+    // 1) Exact HSL tokens we generate
+    if (c.includes("hsl(210") || c.includes("210, 80%")) return "npa";
+    if (c.includes("hsl(0") && c.includes("75%")) return "ai";
+    if (c.includes("hsl(0") && c.includes("0%") && c.includes("15%")) return "user";
+
+    // 2) TipTap Color mark often serializes to rgb(...)
+    // Approx matches for:
+    // npa: hsl(210, 80%, 45%)  ~ rgb(23, 115, 206)
+    // ai:  hsl(0, 75%, 50%)    ~ rgb(223, 32, 32)
+    // user:hsl(0, 0%, 15%)     ~ rgb(38, 38, 38)
+    if (c.includes("rgb(") && (c.includes("23, 115") || c.includes("115, 206") || c.includes("24, 116"))) {
+      return "npa";
+    }
+    if (c.includes("rgb(") && (c.includes("223, 32") || c.includes("224, 32") || c.includes("223,32"))) {
+      return "ai";
+    }
+    if (c.includes("rgb(") && (c.includes("38, 38") || c.includes("39, 39") || c.includes("0, 0, 0"))) {
+      return "user";
+    }
+
+    // Fallback: if unknown, assume user (safe default)
+    return "user";
+  };
+
+  // TipTap emits paragraphs; sometimes color can be on <p> or inner <span style="color: ...">
   const paragraphs = body.querySelectorAll("p");
-  
+
   paragraphs.forEach((p) => {
-    // Get inner HTML to preserve <br> tags and convert them to \n
+    // Build text preserving <br> as \n
     let text = "";
     p.childNodes.forEach((node) => {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -120,32 +155,25 @@ const parseHtmlToSegments = (html: string): TextSegment[] => {
       } else if (node.nodeName === "BR") {
         text += "\n";
       } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // keep element text, but ignore its markup here
         text += (node as HTMLElement).textContent || "";
       }
     });
-    
+
     if (!text.trim()) return;
-    
-    // Get color from style attribute
-    const style = p.getAttribute("style") || "";
-    let type: SegmentType = "user"; // Default to user (black)
-    
-    // Check for blue (NPA)
-    if (style.includes("210, 80%") || style.includes("hsl(210")) {
-      type = "npa";
-    }
-    // Check for red (AI)
-    else if (style.includes("0, 75%") || style.includes("hsl(0,") || style.includes("hsl(0 ")) {
-      type = "ai";
-    }
-    
+
+    const pColor = extractInlineColor(p);
+    const innerColored = p.querySelector("[style*='color']");
+    const innerColor = extractInlineColor(innerColored);
+    const type = detectTypeFromColor(pColor || innerColor);
+
     segments.push({
       id: `seg-${segmentIndex++}`,
       type,
       text,
     });
   });
-  
+
   return segments;
 };
 
@@ -173,7 +201,9 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
         const color = SEGMENT_COLORS[seg.type];
         // Preserve line breaks as <br> tags
         const textWithBreaks = seg.text.replace(/\n/g, "<br>");
-        return `<p style="color: ${color};">${textWithBreaks}</p>`;
+        // TipTap preserves color reliably via the Color/TextStyle mark (span style="color"),
+        // but may drop inline styles on <p> depending on schema.
+        return `<p><span style="color: ${color};">${textWithBreaks}</span></p>`;
       })
       .join("");
   }, [segments]);
@@ -287,7 +317,9 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
   if (isEditing) {
     return (
       <RichTextEditor
-        content={segmentsToHtml}
+        // IMPORTANT: while editing we must feed back the live editor HTML,
+        // otherwise the editor gets reset and loses paragraphs/colors.
+        content={editorContent || segmentsToHtml}
         onChange={handleEditorChange}
       />
     );
