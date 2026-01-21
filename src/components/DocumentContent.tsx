@@ -25,8 +25,14 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
 
   return (
     <div className="flex flex-col h-full p-4 gap-3">
-      {/* Текст обращения - увеличенный блок */}
-      <SectionBlock title="Текст обращения" maxHeight="max-h-36">
+      {/* Текст обращения - с ID обращения и изменяемой высотой */}
+      <SectionBlock 
+        title="Текст обращения" 
+        maxHeight="max-h-36" 
+        stickyLabel="ID обращения: ОБР-2025-001847"
+        resizable
+        defaultHeight={160}
+      >
         <div className="text-foreground whitespace-pre-line text-base leading-relaxed">
           {isEditing ? (
             <textarea
