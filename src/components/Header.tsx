@@ -5,11 +5,11 @@ const Header = () => {
         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
           <span className="text-primary-foreground font-semibold text-sm">C</span>
         </div>
-        <h1 className="text-lg font-semibold text-foreground hidden sm:block">
+        <h1 className="text-base font-semibold text-foreground hidden sm:block">
           Система обработки вопросов и ответов с ИИ
         </h1>
         <h1 className="text-sm font-semibold text-foreground sm:hidden">
-          Система обработки Q&A с ИИ
+          Система Q&A с ИИ
         </h1>
       </div>
     </header>
