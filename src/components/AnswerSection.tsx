@@ -103,33 +103,50 @@ const initialSegments: TextSegment[] = [
 const parseHtmlToSegments = (html: string): TextSegment[] => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
-  const paragraphs = doc.querySelectorAll("p");
+  const body = doc.body;
   
   const segments: TextSegment[] = [];
+  let segmentIndex = 0;
   
-  paragraphs.forEach((p, index) => {
-    const style = p.getAttribute("style") || "";
-    const text = p.textContent || "";
+  // Process all paragraph elements
+  const paragraphs = body.querySelectorAll("p");
+  
+  paragraphs.forEach((p) => {
+    // Get inner HTML to preserve <br> tags and convert them to \n
+    let text = "";
+    p.childNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent || "";
+      } else if (node.nodeName === "BR") {
+        text += "\n";
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        text += (node as HTMLElement).textContent || "";
+      }
+    });
     
     if (!text.trim()) return;
     
-    // Determine type by color in style
+    // Get color from style attribute
+    const style = p.getAttribute("style") || "";
     let type: SegmentType = "user"; // Default to user (black)
     
-    if (style.includes("210") || style.includes("rgb(37, 99, 235)") || style.includes("45%")) {
-      type = "npa"; // Blue
-    } else if (style.includes("0, 75%") || style.includes("rgb(220, 38, 38)") || style.includes("hsl(0")) {
-      type = "ai"; // Red
+    // Check for blue (NPA)
+    if (style.includes("210, 80%") || style.includes("hsl(210")) {
+      type = "npa";
+    }
+    // Check for red (AI)
+    else if (style.includes("0, 75%") || style.includes("hsl(0,") || style.includes("hsl(0 ")) {
+      type = "ai";
     }
     
     segments.push({
-      id: `parsed-${index}`,
+      id: `seg-${segmentIndex++}`,
       type,
-      text: text.replace(/<br\s*\/?>/gi, "\n"),
+      text,
     });
   });
   
-  return segments.length > 0 ? segments : initialSegments;
+  return segments;
 };
 
 interface AnswerSectionProps {
@@ -147,7 +164,7 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
   const [isProcessing, setIsProcessing] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const [aiEditedText, setAiEditedText] = useState(false); // Track if AI edited
-  const wasEditingRef = useRef(isEditing);
+  const prevIsEditingRef = useRef(isEditing);
 
   // Convert segments to HTML for editor with proper colors
   const segmentsToHtml = useMemo(() => {
@@ -161,15 +178,23 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
       .join("");
   }, [segments]);
 
-  // Handle exiting edit mode - parse HTML back to segments
+  // Initialize editor content when entering edit mode
   useEffect(() => {
-    if (wasEditingRef.current && !isEditing && editorContent) {
-      // Exiting edit mode - save changes
-      const newSegments = parseHtmlToSegments(editorContent);
-      setSegments(newSegments);
+    if (isEditing && !prevIsEditingRef.current) {
+      // Entering edit mode - set initial content
+      setEditorContent(segmentsToHtml);
     }
-    wasEditingRef.current = isEditing;
-  }, [isEditing, editorContent]);
+    
+    if (!isEditing && prevIsEditingRef.current && editorContent) {
+      // Exiting edit mode - save changes back to segments
+      const newSegments = parseHtmlToSegments(editorContent);
+      if (newSegments.length > 0) {
+        setSegments(newSegments);
+      }
+    }
+    
+    prevIsEditingRef.current = isEditing;
+  }, [isEditing, segmentsToHtml, editorContent]);
 
   const getSegmentClassName = (type: SegmentType): string => {
     switch (type) {
