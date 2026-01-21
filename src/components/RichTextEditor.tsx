@@ -6,7 +6,7 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import RichTextToolbar from "./RichTextToolbar";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 // Black color for user edits
 const USER_COLOR = "hsl(0, 0%, 15%)";
@@ -14,11 +14,45 @@ const USER_COLOR = "hsl(0, 0%, 15%)";
 interface RichTextEditorProps {
   content: string;
   onChange?: (content: string) => void;
-  autoColorUserText?: boolean; // If true, newly typed text becomes black
+  onAutoSave?: (content: string) => void;
+  autoColorUserText?: boolean;
+  autoSaveDelay?: number; // Debounce delay in ms
 }
 
-const RichTextEditor = ({ content, onChange, autoColorUserText = true }: RichTextEditorProps) => {
+const RichTextEditor = ({ 
+  content, 
+  onChange, 
+  onAutoSave,
+  autoColorUserText = true,
+  autoSaveDelay = 1000 
+}: RichTextEditorProps) => {
   const initialContentRef = useRef(content);
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedContentRef = useRef(content);
+
+  // Debounced autosave function
+  const triggerAutoSave = useCallback((html: string) => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      if (html !== lastSavedContentRef.current) {
+        lastSavedContentRef.current = html;
+        onAutoSave?.(html);
+        console.log("Autosave triggered");
+      }
+    }, autoSaveDelay);
+  }, [onAutoSave, autoSaveDelay]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -42,16 +76,20 @@ const RichTextEditor = ({ content, onChange, autoColorUserText = true }: RichTex
     ],
     content: initialContentRef.current,
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML());
+      const html = editor.getHTML();
+      onChange?.(html);
+      triggerAutoSave(html);
     },
-    // Ensure newly typed text is always black (user color)
+    onFocus: ({ editor }) => {
+      // When user clicks to type, ensure new text will be black
+      if (autoColorUserText) {
+        editor.commands.setColor(USER_COLOR);
+      }
+    },
     onSelectionUpdate: ({ editor }) => {
       if (autoColorUserText && editor.isEditable) {
-        const { color } = editor.getAttributes("textStyle");
-        // If no color is set or it's not black, set it to black for new typing
-        if (!color) {
-          editor.commands.setColor(USER_COLOR);
-        }
+        // Always set user color when selection changes for new typing
+        editor.commands.setColor(USER_COLOR);
       }
     },
     editorProps: {
@@ -59,31 +97,30 @@ const RichTextEditor = ({ content, onChange, autoColorUserText = true }: RichTex
         class:
           "prose prose-sm max-w-none focus:outline-none h-full p-4 [&_p]:my-2",
       },
-      // Set black color on every keystroke for user-typed content
-      handleKeyDown: (view, event) => {
-        if (autoColorUserText && view.state.selection) {
-          // Ensure color mark is set for next input
-          const { state } = view;
-          const { from } = state.selection;
-          const marks = state.storedMarks || state.selection.$from.marks();
-          const hasUserColor = marks.some((mark) => 
-            mark.type.name === "textStyle" && 
-            mark.attrs.color === USER_COLOR
-          );
-          if (!hasUserColor) {
-            // We'll apply color on the update
+      handleTextInput: (view, from, to, text) => {
+        // Before inserting text, ensure color mark is set to black
+        if (autoColorUserText && view.state.tr) {
+          const { state, dispatch } = view;
+          const colorMark = state.schema.marks.textStyle;
+          if (colorMark) {
+            const mark = colorMark.create({ color: USER_COLOR });
+            const tr = state.tr.addStoredMark(mark);
+            dispatch(tr);
           }
         }
-        return false;
+        return false; // Let default handling continue
       },
     },
   });
 
-  // Apply user color when editor is ready and user starts typing
+  // Apply user color immediately when editor is ready
   useEffect(() => {
     if (editor && autoColorUserText) {
-      // Set initial color for new typing
-      editor.commands.setColor(USER_COLOR);
+      // Set stored mark for black color
+      const colorMark = editor.schema.marks.textStyle;
+      if (colorMark) {
+        editor.commands.setColor(USER_COLOR);
+      }
     }
   }, [editor, autoColorUserText]);
 
