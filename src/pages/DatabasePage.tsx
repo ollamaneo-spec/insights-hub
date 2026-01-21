@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 
 interface Appeal {
   id: string;
@@ -19,18 +18,19 @@ interface Appeal {
   comments: string;
   status: "В работе" | "На рассмотрении" | "Утвержден";
   officialLetterLink: string;
+  hasWorkspaceLink?: boolean;
 }
 
-const getStatusVariant = (status: Appeal["status"]) => {
+const getStatusStyle = (status: Appeal["status"]) => {
   switch (status) {
     case "В работе":
-      return "secondary";
+      return "bg-sky-500 text-white";
     case "На рассмотрении":
-      return "outline";
+      return "bg-rose-800 text-white";
     case "Утвержден":
-      return "default";
+      return "bg-green-600 text-white";
     default:
-      return "secondary";
+      return "bg-muted text-foreground";
   }
 };
 
@@ -40,16 +40,17 @@ const syntheticData: Appeal[] = [
     summary: "Разъяснение о применении новых реквизитов кассового чека (теги 1125, 1230, 1234, 1236)",
     documentsLink: "https://www.consultant.ru/document/cons_doc_LAW_42359/",
     answerId: "ОТВ-2025-003921",
-    comments: "Требуется уточнение по тегу 1125",
+    comments: "Необходимо добавить ссылку на ГК пункт 123",
     status: "В работе",
     officialLetterLink: "https://www.nalog.gov.ru/rn77/taxation/reference_work/",
+    hasWorkspaceLink: true,
   },
   {
     id: "ОБР-2025-001832",
     summary: "Вопрос о порядке применения ККТ при расчетах в сети Интернет",
     documentsLink: "https://www.nalog.gov.ru/rn77/taxation/kkt/",
     answerId: "ОТВ-2025-003905",
-    comments: "Ожидает согласования с юр. отделом",
+    comments: "Некорректно указана ссылка на абзац №3, п. 5 ФЗ ...",
     status: "На рассмотрении",
     officialLetterLink: "https://www.nalog.gov.ru/rn77/service/kb/",
   },
@@ -67,7 +68,7 @@ const syntheticData: Appeal[] = [
     summary: "Порядок формирования чека коррекции при выявлении ошибок",
     documentsLink: "https://www.nalog.gov.ru/rn77/taxation/kkt/",
     answerId: "ОТВ-2025-003864",
-    comments: "Направлено на доработку",
+    comments: "Ответ не по теме обращения",
     status: "В работе",
     officialLetterLink: "https://normativ.kontur.ru/",
   },
@@ -76,7 +77,7 @@ const syntheticData: Appeal[] = [
     summary: "Особенности применения ККТ при продаже алкогольной продукции",
     documentsLink: "https://egais.center-inform.ru/",
     answerId: "ОТВ-2025-003842",
-    comments: "Согласовано с Росалкогольрегулированием",
+    comments: "Необходимо добавить пункт 12345",
     status: "Утвержден",
     officialLetterLink: "https://fsrar.gov.ru/",
   },
@@ -85,7 +86,7 @@ const syntheticData: Appeal[] = [
     summary: "Вопрос о применении ставки НДС 0% при экспорте",
     documentsLink: "https://www.nalog.gov.ru/rn77/taxation/taxes/nds/",
     answerId: "ОТВ-2025-003819",
-    comments: "Требуется подтверждение документов",
+    comments: "Необходимо добавить ссылку на ГК пункт 123",
     status: "На рассмотрении",
     officialLetterLink: "https://www.consultant.ru/document/cons_doc_LAW_28165/",
   },
@@ -103,7 +104,7 @@ const syntheticData: Appeal[] = [
     summary: "Запрос о применении онлайн-касс при оказании услуг ЖКХ",
     documentsLink: "https://www.consultant.ru/document/cons_doc_LAW_353587/",
     answerId: "ОТВ-2025-003785",
-    comments: "На проверке у специалиста",
+    comments: "Некорректно указана ссылка на абзац №3, п. 5 ФЗ ...",
     status: "В работе",
     officialLetterLink: "https://www.minstroyrf.gov.ru/",
   },
@@ -112,7 +113,7 @@ const syntheticData: Appeal[] = [
     summary: "Особенности формирования фискальных документов для самозанятых",
     documentsLink: "https://npd.nalog.ru/",
     answerId: "ОТВ-2025-003768",
-    comments: "Завершено",
+    comments: "Ответ не по теме обращения",
     status: "Утвержден",
     officialLetterLink: "https://www.nalog.gov.ru/rn77/taxation/taxes/samozanjatye/",
   },
@@ -121,7 +122,7 @@ const syntheticData: Appeal[] = [
     summary: "Вопрос о переходе на ФФД 1.2 и новые требования к реквизитам",
     documentsLink: "https://www.nalog.gov.ru/rn77/taxation/kkt/t_ffd/",
     answerId: "ОТВ-2025-003751",
-    comments: "Ожидает дополнительных материалов",
+    comments: "Необходимо добавить пункт 12345",
     status: "На рассмотрении",
     officialLetterLink: "https://www.consultant.ru/document/cons_doc_LAW_359086/",
   },
@@ -163,7 +164,18 @@ const DatabasePage = () => {
               {syntheticData.map((appeal) => (
                 <TableRow key={appeal.id}>
                   <TableCell className="font-mono text-xs">{appeal.id}</TableCell>
-                  <TableCell className="text-sm">{appeal.summary}</TableCell>
+                  <TableCell className="text-sm">
+                    {appeal.hasWorkspaceLink ? (
+                      <Link 
+                        to="/" 
+                        className="text-primary hover:underline cursor-pointer"
+                      >
+                        {appeal.summary}
+                      </Link>
+                    ) : (
+                      appeal.summary
+                    )}
+                  </TableCell>
                   <TableCell>
                     <a
                       href={appeal.documentsLink}
@@ -177,9 +189,9 @@ const DatabasePage = () => {
                   <TableCell className="font-mono text-xs">{appeal.answerId}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{appeal.comments}</TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(appeal.status)} className="text-xs">
+                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${getStatusStyle(appeal.status)}`}>
                       {appeal.status}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     <a
