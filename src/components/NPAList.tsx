@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, ExternalLink, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,19 +79,6 @@ const NPAList = ({ items }: NPAListProps) => {
                       <p className="text-xs text-muted-foreground mt-1">
                         {item.paragraphs.length} пунктов
                       </p>
-                      {item.tags && item.tags.length > 0 && (
-                        <div className="flex gap-1 mt-1.5 flex-wrap">
-                          {item.tags.map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="secondary"
-                              className="text-xs px-1.5 py-0 bg-muted text-muted-foreground"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </button>
                 </CollapsibleTrigger>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, ExternalLink, Copy, Check, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -112,11 +111,11 @@ const QAContent = () => {
         >
           <div className="border border-border rounded overflow-hidden bg-background">
             <CollapsibleTrigger asChild>
-              <button className="w-full text-left p-2 hover:bg-muted/50 transition-colors flex items-start gap-1.5">
+              <button className="w-full text-left p-3 hover:bg-muted/50 transition-colors flex items-start gap-2">
                 {openDocs.includes(doc.id) ? (
-                  <ChevronDown className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                 ) : (
-                  <ChevronRight className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1 min-w-0">
                   <a
@@ -124,27 +123,14 @@ const QAContent = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="font-medium text-xs text-primary hover:underline flex items-center gap-1"
+                    className="font-medium text-sm text-primary hover:underline flex items-center gap-1"
                   >
                     {doc.title}
-                    <ExternalLink className="h-2.5 w-2.5" />
+                    <ExternalLink className="h-3 w-3" />
                   </a>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {doc.paragraphs.length} пунктов
                   </p>
-                  {doc.tags && doc.tags.length > 0 && (
-                    <div className="flex gap-1 mt-1 flex-wrap">
-                      {doc.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className="text-[10px] px-1 py-0 bg-muted text-muted-foreground"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </button>
             </CollapsibleTrigger>
@@ -195,14 +181,14 @@ const QAContent = () => {
         </Section>
       </ScrollArea>
 
-      {/* Expand Dialogs - 80% of screen */}
+      {/* Expand Dialogs - 80% of screen with larger text */}
       <Dialog open={expandedSection === "question"} onOpenChange={() => setExpandedSection(null)}>
         <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
           <DialogHeader className="pb-4 border-b border-border">
             <DialogTitle className="text-2xl font-bold">Вопрос из БД</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 pr-4">
-            <div className="py-6 text-base leading-relaxed">{questionContent}</div>
+            <div className="py-6 text-lg leading-relaxed">{questionContent}</div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
@@ -213,7 +199,7 @@ const QAContent = () => {
             <DialogTitle className="text-2xl font-bold">Ответ из БД</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 pr-4">
-            <div className="py-6 text-base leading-relaxed">{answerContent}</div>
+            <div className="py-6 text-lg leading-relaxed">{answerContent}</div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
@@ -224,7 +210,7 @@ const QAContent = () => {
             <DialogTitle className="text-2xl font-bold">Связанные документы</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 pr-4">
-            <div className="py-6">{documentsContent}</div>
+            <div className="py-6 text-base">{documentsContent}</div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
@@ -279,41 +265,41 @@ const ParagraphItem = ({ paragraph, copiedId, onCopy }: ParagraphItemProps) => {
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className="border-b border-border last:border-b-0">
         <CollapsibleTrigger asChild>
-          <button className="w-full text-left px-2.5 py-1.5 hover:bg-muted/30 transition-colors flex items-center gap-1.5">
+          <button className="w-full text-left px-3 py-2 hover:bg-muted/30 transition-colors flex items-center gap-2">
             {isOpen ? (
-              <ChevronDown className="h-2.5 w-2.5 text-muted-foreground flex-shrink-0" />
+              <ChevronDown className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             ) : (
-              <ChevronRight className="h-2.5 w-2.5 text-muted-foreground flex-shrink-0" />
+              <ChevronRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             )}
             <a
               href={paragraph.link}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-[10px] font-medium text-primary hover:underline flex items-center gap-1"
+              className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
             >
               {paragraph.number}
-              <ExternalLink className="h-2 w-2" />
+              <ExternalLink className="h-3 w-3" />
             </a>
           </button>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="px-2.5 pb-2">
-            <div className="bg-muted/30 p-2 rounded border border-border relative group">
-              <p className="text-[10px] text-muted-foreground leading-relaxed pr-6 select-text">
+          <div className="px-3 pb-3">
+            <div className="bg-muted/30 p-3 rounded border border-border relative group">
+              <p className="text-sm text-foreground leading-relaxed pr-8 select-text">
                 {paragraph.text}
               </p>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-0.5 right-0.5 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => onCopy(paragraph.text, paragraph.id)}
               >
                 {copiedId === paragraph.id ? (
-                  <Check className="h-2.5 w-2.5 text-primary" />
+                  <Check className="h-3 w-3 text-primary" />
                 ) : (
-                  <Copy className="h-2.5 w-2.5" />
+                  <Copy className="h-3 w-3" />
                 )}
               </Button>
             </div>
