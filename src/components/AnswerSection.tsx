@@ -179,14 +179,14 @@ const AnswerSection = () => {
   return (
     <>
       <div
-        className="space-y-3 cursor-text select-text"
+        className="space-y-4 cursor-text select-text"
         onMouseUp={handleTextSelection}
       >
         {segments.map((segment) => (
           <p
             key={segment.id}
             data-segment-id={segment.id}
-            className={`${getSegmentClassName(segment.type)} text-sm leading-relaxed whitespace-pre-line`}
+            className={`${getSegmentClassName(segment.type)} text-base leading-relaxed whitespace-pre-line`}
           >
             {segment.text}
           </p>
