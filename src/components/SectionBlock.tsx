@@ -60,10 +60,10 @@ const SectionBlock = ({
     <>
       <section 
         ref={containerRef}
-        className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col shadow-sm ${className}`}
+        className={`border border-border bg-card overflow-hidden flex flex-col ${className}`}
         style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
       >
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 flex-shrink-0">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 flex-shrink-0">
           <h3 className="font-bold text-base text-foreground tracking-tight">
             {title}
           </h3>
@@ -71,7 +71,7 @@ const SectionBlock = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-md transition-colors"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-colors"
               onClick={() => setIsExpanded(true)}
               title="Открыть на всю страницу"
             >
@@ -81,7 +81,7 @@ const SectionBlock = ({
         </div>
         {stickyLabel && (
           <div className="px-4 py-2 border-b border-border/50 bg-muted/10 flex-shrink-0">
-            <span className="inline-block bg-background border border-border rounded-md px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+            <span className="inline-block bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
               {stickyLabel}
             </span>
           </div>
