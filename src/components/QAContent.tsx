@@ -85,18 +85,18 @@ const QAContent = () => {
   );
 
   const answerContent = (
-    <div className="text-foreground text-sm">
-      <p className="mb-3 leading-relaxed">
+    <div className="text-foreground text-sm space-y-3">
+      <p className="leading-relaxed">
         Согласно приказу ФНС России от 26.03.2025 № ЕД-7-20/336@, тег 1125 "Признаки расчета в "Интернет" является обязательным реквизитом для следующих случаев:
       </p>
-      <ul className="list-disc pl-5 space-y-2 leading-relaxed">
+      <ul className="list-disc pl-5 space-y-1.5 leading-relaxed">
         <li>При осуществлении расчетов в безналичном порядке через Интернет</li>
         <li>При использовании автоматических устройств для расчетов</li>
         <li>При дистанционной торговле маркированными товарами</li>
         <li>При расчетах через торговые маркетплейсы и агрегаторы</li>
       </ul>
-      <p className="mt-3 leading-relaxed">
-        При использовании онлайн-платежей в реквизит "место расчетов" (тег 1187) должен содержать адрес сайта в сети Интернет.
+      <p className="leading-relaxed">
+        При использовании онлайн-платежей в реквизит "место расчетов" (тег 1187) должен содержать адрес сайта в сети Интернет. Данное требование распространяется на все организации и индивидуальных предпринимателей, осуществляющих расчеты через сеть Интернет.
       </p>
     </div>
   );
@@ -154,31 +154,36 @@ const QAContent = () => {
   );
 
   return (
-    <div className="h-full flex flex-col pt-2">
+    <div className="h-full flex flex-col">
       <ScrollArea className="flex-1">
-        {/* Вопрос из БД */}
-        <Section 
-          title="Вопрос из БД" 
-          onExpand={() => setExpandedSection("question")}
-        >
-          {questionContent}
-        </Section>
+        <div className="p-2 space-y-2">
+          {/* Вопрос из БД */}
+          <Section 
+            title="Вопрос из БД" 
+            onExpand={() => setExpandedSection("question")}
+          >
+            {questionContent}
+          </Section>
 
-        {/* Ответ из БД */}
-        <Section 
-          title="Ответ из БД" 
-          onExpand={() => setExpandedSection("answer")}
-        >
-          {answerContent}
-        </Section>
+          {/* Ответ из БД */}
+          <Section 
+            title="Ответ из БД" 
+            onExpand={() => setExpandedSection("answer")}
+            maxHeight="max-h-40"
+          >
+            {answerContent}
+          </Section>
 
-        {/* Связанные документы */}
-        <Section 
-          title="Связанные документы" 
-          onExpand={() => setExpandedSection("documents")}
-        >
-          {documentsContent}
-        </Section>
+          {/* Связанные документы */}
+          <Section 
+            title="Связанные документы" 
+            onExpand={() => setExpandedSection("documents")}
+            maxHeight="max-h-none"
+            className="flex-1"
+          >
+            {documentsContent}
+          </Section>
+        </div>
       </ScrollArea>
 
       {/* Expand Dialogs - 80% of screen with larger text */}
@@ -223,29 +228,35 @@ interface SectionProps {
   title: string;
   children: React.ReactNode;
   onExpand?: () => void;
+  maxHeight?: string;
+  className?: string;
 }
 
-const Section = ({ title, children, onExpand }: SectionProps) => (
-  <section className="border border-border rounded-md bg-card mb-2 mx-2 overflow-hidden">
-    <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/40">
-      <h3 className="font-bold text-sm text-foreground">{title}</h3>
-      {onExpand && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6 text-muted-foreground hover:text-foreground"
-          onClick={onExpand}
-          title="Открыть на всю страницу"
-        >
-          <Maximize2 className="h-3.5 w-3.5" />
-        </Button>
-      )}
-    </div>
-    <ScrollArea className="max-h-32">
-      <div className="p-3">{children}</div>
-    </ScrollArea>
-  </section>
-);
+const Section = ({ title, children, onExpand, maxHeight = "max-h-28", className = "" }: SectionProps) => {
+  const isFlexible = maxHeight === "max-h-none";
+  
+  return (
+    <section className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}>
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40 flex-shrink-0">
+        <h3 className="font-bold text-sm text-foreground">{title}</h3>
+        {onExpand && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            onClick={onExpand}
+            title="Открыть на всю страницу"
+          >
+            <Maximize2 className="h-3.5 w-3.5" />
+          </Button>
+        )}
+      </div>
+      <ScrollArea className={isFlexible ? "flex-1" : maxHeight}>
+        <div className="p-2">{children}</div>
+      </ScrollArea>
+    </section>
+  );
+};
 
 interface ParagraphItemProps {
   paragraph: {
