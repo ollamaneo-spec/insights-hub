@@ -63,7 +63,7 @@ const SectionBlock = ({
         className={`border border-border bg-card overflow-hidden flex flex-col ${className}`}
         style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
       >
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 flex-shrink-0">
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/30 flex-shrink-0">
           <h3 className="font-bold text-base text-foreground tracking-tight">
             {title}
           </h3>
@@ -80,14 +80,14 @@ const SectionBlock = ({
           )}
         </div>
         {stickyLabel && (
-          <div className="px-4 py-2 border-b border-border/50 bg-muted/10 flex-shrink-0">
-            <span className="inline-block bg-background border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
+          <div className="px-3 py-1 border-b border-border/50 bg-muted/10 flex-shrink-0">
+            <span className="inline-block bg-background border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
               {stickyLabel}
             </span>
           </div>
         )}
         <ScrollArea className="flex-1 min-h-0">
-          <div className="p-4">
+          <div className="px-3 py-2">
             {children}
           </div>
         </ScrollArea>
