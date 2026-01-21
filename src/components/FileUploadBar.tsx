@@ -30,15 +30,17 @@ const FileUploadBar = ({ onFilesSelected }: FileUploadBarProps) => {
         multiple
         accept=".pdf,.doc,.docx,.txt,.xls,.xlsx"
       />
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={handleClick}
-        className="gap-2 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-accent/80 px-3 rounded-md transition-colors"
-      >
-        <Upload className="h-4 w-4" />
-        <span className="font-medium">Файлы для загрузки</span>
-      </Button>
+      <div className="bg-muted/80 h-9 p-1 flex items-center">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={handleClick}
+          className="gap-2 h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-accent/80 px-3 transition-colors"
+        >
+          <Upload className="h-3.5 w-3.5" />
+          <span className="font-medium">Файлы для загрузки</span>
+        </Button>
+      </div>
     </div>
   );
 };

@@ -155,13 +155,13 @@ const QAContent = () => {
 
   return (
     <div className="h-full flex flex-col p-2 gap-2">
-      {/* Вопрос из БД - ~35% высоты */}
+      {/* Вопрос из БД - 40% высоты */}
       <Section 
         title="Вопрос из БД" 
         onExpand={() => setExpandedSection("question")}
         resizable
-        defaultHeight={180}
-        heightRatio={0.35}
+        defaultHeight={220}
+        heightRatio={0.40}
       >
         {questionContent}
       </Section>
