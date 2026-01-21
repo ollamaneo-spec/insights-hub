@@ -36,21 +36,21 @@ const ActionButtons = ({ onEditMode, isEditing = false }: ActionButtonsProps) =>
 
   return (
     <>
-      <div className="flex items-center gap-2 p-4 border-t border-border bg-card">
+      <div className="flex items-center gap-2 px-3 py-2 border-t border-border bg-muted/30">
         <Button 
           variant={isEditing ? "default" : "outline"} 
           size="sm" 
-          className="gap-2 flex-1 sm:flex-none"
+          className="gap-1.5 h-8 text-xs"
           onClick={onEditMode}
         >
-          <Pencil className="h-4 w-4" />
+          <Pencil className="h-3.5 w-3.5" />
           {isEditing ? "Режим редактирования" : "Редактировать"}
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none">
-              <Download className="h-4 w-4" />
+            <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs">
+              <Download className="h-3.5 w-3.5" />
               Скачать
             </Button>
           </DropdownMenuTrigger>
@@ -66,10 +66,10 @@ const ActionButtons = ({ onEditMode, isEditing = false }: ActionButtonsProps) =>
 
         <Button 
           size="sm" 
-          className="gap-2 flex-1 sm:flex-none bg-primary hover:bg-primary/90"
+          className="gap-1.5 h-8 text-xs bg-primary hover:bg-primary/90"
           onClick={() => setIsApproveDialogOpen(true)}
         >
-          <CheckCircle className="h-4 w-4" />
+          <CheckCircle className="h-3.5 w-3.5" />
           Утвердить
         </Button>
       </div>

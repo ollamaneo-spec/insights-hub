@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AnswerSection from "./AnswerSection";
+import SectionBlock from "./SectionBlock";
 
 interface DocumentContentProps {
   isEditing?: boolean;
@@ -21,47 +22,44 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
   );
 
   return (
-    <div className="space-y-0 text-sm leading-relaxed text-foreground">
+    <div className="flex flex-col h-full">
       {/* Текст обращения */}
-      <section className="border-b border-border bg-card p-4">
-        <h3 className="font-bold text-sm text-foreground mb-2">Текст обращения:</h3>
+      <SectionBlock title="Текст обращения" maxHeight="max-h-32">
         {isEditing ? (
           <textarea
             value={appealText}
             onChange={(e) => setAppealText(e.target.value)}
-            className="w-full min-h-[140px] p-2 text-xs text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full min-h-[100px] p-2 text-xs text-muted-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring"
           />
         ) : (
-          <div className="text-muted-foreground whitespace-pre-line text-xs">
+          <div className="text-muted-foreground whitespace-pre-line text-xs leading-relaxed">
             {appealText}
           </div>
         )}
-      </section>
+      </SectionBlock>
 
       {/* Суть обращения */}
-      <section className="border-b border-border bg-card p-4">
-        <h3 className="font-bold text-sm text-foreground mb-2">Суть обращения:</h3>
+      <SectionBlock title="Суть обращения" maxHeight="max-h-20">
         {isEditing ? (
           <textarea
             value={essenceText}
             onChange={(e) => setEssenceText(e.target.value)}
-            className="w-full min-h-[40px] p-2 text-xs text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full min-h-[32px] p-2 text-xs text-muted-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring"
           />
         ) : (
-          <div className="text-muted-foreground text-xs">
+          <div className="text-muted-foreground text-xs leading-relaxed">
             {essenceText}
           </div>
         )}
-      </section>
+      </SectionBlock>
 
       {/* Ответ */}
-      <section className="border-b border-border bg-card p-4">
-        <h3 className="font-bold text-sm text-foreground mb-2">Ответ:</h3>
+      <SectionBlock title="Ответ" maxHeight="max-h-48" className="flex-1">
         <p className="text-[10px] text-muted-foreground mb-2 italic">
           Выделите текст для редактирования с помощью ИИ
         </p>
         <AnswerSection />
-      </section>
+      </SectionBlock>
     </div>
   );
 };

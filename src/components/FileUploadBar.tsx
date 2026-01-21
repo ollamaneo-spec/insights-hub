@@ -21,7 +21,7 @@ const FileUploadBar = ({ onFilesSelected }: FileUploadBarProps) => {
   };
 
   return (
-    <div className="h-14 border-b border-border bg-card px-4 flex items-center">
+    <div className="h-10 border-b border-border bg-muted/30 px-3 flex items-center">
       <input
         type="file"
         ref={fileInputRef}
@@ -34,9 +34,9 @@ const FileUploadBar = ({ onFilesSelected }: FileUploadBarProps) => {
         variant="ghost" 
         size="sm" 
         onClick={handleClick}
-        className="gap-2 text-muted-foreground hover:text-foreground hover:bg-accent"
+        className="gap-1.5 h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-accent px-2"
       >
-        <Upload className="h-4 w-4" />
+        <Upload className="h-3.5 w-3.5" />
         <span>Файлы для загрузки</span>
       </Button>
     </div>
