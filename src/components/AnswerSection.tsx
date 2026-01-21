@@ -97,6 +97,7 @@ const AnswerSection = () => {
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editedText, setEditedText] = useState("");
+  const [instruction, setInstruction] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const getSegmentClassName = (type: SegmentType): string => {
@@ -174,6 +175,7 @@ const AnswerSection = () => {
     setSelectedText("");
     setSelectedSegmentId(null);
     setEditedText("");
+    setInstruction("");
   };
 
   return (
@@ -217,6 +219,16 @@ const AnswerSection = () => {
                 onChange={(e) => setEditedText(e.target.value)}
                 className="min-h-[120px]"
                 placeholder="Отредактируйте текст..."
+              />
+            </div>
+
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">Инструкция:</p>
+              <Textarea
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                className="min-h-[80px]"
+                placeholder="Введите промпт - инструкцию для ИИ"
               />
             </div>
 
