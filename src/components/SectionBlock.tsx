@@ -24,24 +24,24 @@ const SectionBlock = ({
   return (
     <>
       <section className={`border-b border-border bg-card ${className}`}>
-        <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
-          <h3 className="font-semibold text-sm text-foreground tracking-tight">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50 bg-muted/30">
+          <h3 className="font-bold text-base text-foreground tracking-tight">
             {title}
           </h3>
           {allowExpand && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
               onClick={() => setIsExpanded(true)}
               title="Открыть на всю страницу"
             >
-              <Maximize2 className="h-3.5 w-3.5" />
+              <Maximize2 className="h-4 w-4" />
             </Button>
           )}
         </div>
         <ScrollArea className={`${maxHeight} scrollbar-thin`}>
-          <div className="p-3">
+          <div className="p-4">
             {children}
           </div>
         </ScrollArea>
@@ -50,10 +50,10 @@ const SectionBlock = ({
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
         <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
+            <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 max-h-[70vh] pr-4">
-            <div className="py-2">
+            <div className="py-4">
               {children}
             </div>
           </ScrollArea>
