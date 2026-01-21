@@ -170,17 +170,17 @@ const QAContent = () => {
   return (
     <div className="h-full flex flex-col pt-2">
       <ScrollArea className="flex-1">
-        {/* Вопрос */}
+        {/* Вопрос из БД */}
         <Section 
-          title="Вопрос" 
+          title="Вопрос из БД" 
           onExpand={() => setExpandedSection("question")}
         >
           {questionContent}
         </Section>
 
-        {/* Ответ */}
+        {/* Ответ из БД */}
         <Section 
-          title="Ответ" 
+          title="Ответ из БД" 
           onExpand={() => setExpandedSection("answer")}
         >
           {answerContent}
@@ -195,31 +195,37 @@ const QAContent = () => {
         </Section>
       </ScrollArea>
 
-      {/* Expand Dialogs */}
+      {/* Expand Dialogs - 80% of screen */}
       <Dialog open={expandedSection === "question"} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-3xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Вопрос</DialogTitle>
+        <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
+          <DialogHeader className="pb-4 border-b border-border">
+            <DialogTitle className="text-2xl font-bold">Вопрос из БД</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[60vh] pr-4">{questionContent}</ScrollArea>
+          <ScrollArea className="flex-1 pr-4">
+            <div className="py-6 text-base leading-relaxed">{questionContent}</div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
       <Dialog open={expandedSection === "answer"} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-3xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Ответ</DialogTitle>
+        <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
+          <DialogHeader className="pb-4 border-b border-border">
+            <DialogTitle className="text-2xl font-bold">Ответ из БД</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[60vh] pr-4">{answerContent}</ScrollArea>
+          <ScrollArea className="flex-1 pr-4">
+            <div className="py-6 text-base leading-relaxed">{answerContent}</div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
       <Dialog open={expandedSection === "documents"} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-3xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">Связанные документы</DialogTitle>
+        <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
+          <DialogHeader className="pb-4 border-b border-border">
+            <DialogTitle className="text-2xl font-bold">Связанные документы</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[60vh] pr-4">{documentsContent}</ScrollArea>
+          <ScrollArea className="flex-1 pr-4">
+            <div className="py-6">{documentsContent}</div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>

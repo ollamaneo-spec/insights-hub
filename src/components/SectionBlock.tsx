@@ -48,12 +48,12 @@ const SectionBlock = ({
       </section>
 
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
+        <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
+          <DialogHeader className="pb-4 border-b border-border">
+            <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="flex-1 max-h-[70vh] pr-4">
-            <div className="py-4">
+          <ScrollArea className="flex-1 pr-4">
+            <div className="py-6 text-base leading-relaxed">
               {children}
             </div>
           </ScrollArea>
