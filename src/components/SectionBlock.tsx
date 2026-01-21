@@ -79,18 +79,18 @@ const SectionBlock = ({
             </Button>
           )}
         </div>
-        <div className="flex-1 min-h-0 relative">
-          {stickyLabel && (
-            <div className="absolute top-2 left-4 z-10 bg-muted border border-border rounded px-2 py-0.5 text-xs font-medium text-muted-foreground shadow-sm">
+        {stickyLabel && (
+          <div className="px-4 py-2 border-b border-border bg-muted/20 flex-shrink-0">
+            <span className="inline-block bg-muted border border-border rounded px-2 py-0.5 text-xs font-medium text-muted-foreground">
               {stickyLabel}
-            </div>
-          )}
-          <ScrollArea className="h-full">
-            <div className={`p-4 ${stickyLabel ? 'pt-8' : ''}`}>
-              {children}
-            </div>
-          </ScrollArea>
-        </div>
+            </span>
+          </div>
+        )}
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="p-4">
+            {children}
+          </div>
+        </ScrollArea>
         {resizable && !isFlexible && (
           <div 
             className="h-2 bg-muted/60 hover:bg-primary/20 cursor-ns-resize flex items-center justify-center border-t border-border transition-colors"

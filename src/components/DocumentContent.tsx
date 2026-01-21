@@ -46,8 +46,13 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         </div>
       </SectionBlock>
 
-      {/* Суть обращения */}
-      <SectionBlock title="Суть обращения" maxHeight="max-h-24">
+      {/* Суть обращения - с изменяемой высотой */}
+      <SectionBlock 
+        title="Суть обращения" 
+        maxHeight="max-h-24"
+        resizable
+        defaultHeight={100}
+      >
         <div className="text-foreground text-base leading-relaxed">
           {isEditing ? (
             <textarea
@@ -61,8 +66,14 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         </div>
       </SectionBlock>
 
-      {/* Ответ - заполняет оставшееся пространство */}
-      <SectionBlock title="Ответ" maxHeight="max-h-none" className="flex-1 min-h-0">
+      {/* Ответ - с изменяемой высотой */}
+      <SectionBlock 
+        title="Ответ" 
+        maxHeight="max-h-none" 
+        className="flex-1 min-h-0"
+        resizable
+        defaultHeight={250}
+      >
         <AnswerSection />
       </SectionBlock>
     </div>

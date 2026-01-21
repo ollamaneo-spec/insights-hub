@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, ChevronRight, ExternalLink, Copy, Check, Maximize2 } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { ChevronDown, ChevronRight, ExternalLink, Copy, Check, Maximize2, GripHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -154,28 +154,28 @@ const QAContent = () => {
   );
 
   return (
-    <div className="h-full flex flex-col">
-      <ScrollArea className="flex-1">
-        <div className="p-2 space-y-2">
-          {/* Вопрос из БД */}
-          <Section 
-            title="Вопрос из БД" 
-            onExpand={() => setExpandedSection("question")}
-          >
-            {questionContent}
-          </Section>
+    <div className="h-full flex flex-col p-2 gap-2">
+      {/* Вопрос из БД - с изменяемой высотой */}
+      <Section 
+        title="Вопрос из БД" 
+        onExpand={() => setExpandedSection("question")}
+        resizable
+        defaultHeight={100}
+      >
+        {questionContent}
+      </Section>
 
-          {/* Ответ из БД */}
-          <Section 
-            title="Ответ из БД" 
-            onExpand={() => setExpandedSection("answer")}
-            maxHeight="max-h-none"
-            className="flex-1"
-          >
-            {answerContent}
-          </Section>
-        </div>
-      </ScrollArea>
+      {/* Ответ из БД - с изменяемой высотой */}
+      <Section 
+        title="Ответ из БД" 
+        onExpand={() => setExpandedSection("answer")}
+        maxHeight="max-h-none"
+        className="flex-1"
+        resizable
+        defaultHeight={200}
+      >
+        {answerContent}
+      </Section>
 
       {/* Expand Dialogs - 80% of screen with larger text */}
       <Dialog open={expandedSection === "question"} onOpenChange={() => setExpandedSection(null)}>
@@ -203,20 +203,58 @@ const QAContent = () => {
   );
 };
 
-// Section component for consistent styling
+// Section component for consistent styling with resizable support
 interface SectionProps {
   title: string;
   children: React.ReactNode;
   onExpand?: () => void;
   maxHeight?: string;
   className?: string;
+  resizable?: boolean;
+  defaultHeight?: number;
 }
 
-const Section = ({ title, children, onExpand, maxHeight = "max-h-28", className = "" }: SectionProps) => {
+const Section = ({ 
+  title, 
+  children, 
+  onExpand, 
+  maxHeight = "max-h-28", 
+  className = "",
+  resizable = false,
+  defaultHeight = 120
+}: SectionProps) => {
   const isFlexible = maxHeight === "max-h-none";
+  const [height, setHeight] = useState(defaultHeight);
+  const isResizing = useRef(false);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+    const startY = e.clientY;
+    const startHeight = height;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!isResizing.current) return;
+      const deltaY = moveEvent.clientY - startY;
+      const newHeight = Math.max(60, Math.min(400, startHeight + deltaY));
+      setHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      isResizing.current = false;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [height]);
   
   return (
-    <section className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}>
+    <section 
+      className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}
+      style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
+    >
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40 flex-shrink-0">
         <h3 className="font-bold text-sm text-foreground">{title}</h3>
         {onExpand && (
@@ -231,9 +269,17 @@ const Section = ({ title, children, onExpand, maxHeight = "max-h-28", className 
           </Button>
         )}
       </div>
-      <ScrollArea className={isFlexible ? "flex-1" : maxHeight}>
+      <ScrollArea className="flex-1 min-h-0">
         <div className="p-2">{children}</div>
       </ScrollArea>
+      {resizable && !isFlexible && (
+        <div 
+          className="h-1.5 bg-muted/60 hover:bg-primary/20 cursor-ns-resize flex items-center justify-center border-t border-border transition-colors"
+          onMouseDown={handleMouseDown}
+        >
+          <GripHorizontal className="h-2.5 w-2.5 text-muted-foreground" />
+        </div>
+      )}
     </section>
   );
 };
