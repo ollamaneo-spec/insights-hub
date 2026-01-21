@@ -313,15 +313,18 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     setEditorContent(content);
   };
 
-  // Show rich text editor in edit mode
+  // Show rich text editor in edit mode - takes full block height
   if (isEditing) {
     return (
-      <RichTextEditor
-        // IMPORTANT: while editing we must feed back the live editor HTML,
-        // otherwise the editor gets reset and loses paragraphs/colors.
-        content={editorContent || segmentsToHtml}
-        onChange={handleEditorChange}
-      />
+      <div className="h-full flex flex-col">
+        <RichTextEditor
+          // IMPORTANT: while editing we must feed back the live editor HTML,
+          // otherwise the editor gets reset and loses paragraphs/colors.
+          content={editorContent || segmentsToHtml}
+          onChange={handleEditorChange}
+          autoColorUserText={true}
+        />
+      </div>
     );
   }
 
