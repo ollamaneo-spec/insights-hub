@@ -2,7 +2,6 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import FileUploadBar from "@/components/FileUploadBar";
 import TabPanel from "@/components/TabPanel";
-import DocumentViewer from "@/components/DocumentViewer";
 import DocumentContent from "@/components/DocumentContent";
 import QAContent from "@/components/QAContent";
 import NPAList from "@/components/NPAList";
@@ -85,21 +84,21 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Header />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Left: Document Content with File Upload on top */}
         <div className="flex-1 flex flex-col min-w-0 border-r border-border">
           {/* File Upload Bar */}
           <FileUploadBar onFilesSelected={handleFilesSelected} />
           
-          {/* Document Content */}
-          <div className="flex-1 overflow-auto">
-            <DocumentViewer content={<DocumentContent isEditing={isEditing} />} />
+          {/* Document Content - scrollable area */}
+          <div className="flex-1 overflow-auto min-h-0">
+            <DocumentContent isEditing={isEditing} />
           </div>
           
-          {/* Action Buttons */}
+          {/* Action Buttons - fixed at bottom */}
           <ActionButtons 
             onEditMode={() => setIsEditing(!isEditing)} 
             isEditing={isEditing}
@@ -112,17 +111,17 @@ const Index = () => {
         {/* Right: Tab Panel (НПА / Q&A) */}
         <div
           className={`
-            ${isSidePanelOpen ? "w-full md:w-[380px]" : "w-0"} 
+            ${isSidePanelOpen ? "w-full md:w-[360px]" : "w-0"} 
             flex-shrink-0 transition-all duration-300 overflow-hidden
             fixed md:relative inset-y-0 right-0 z-20 bg-card md:bg-transparent
             ${isSidePanelOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
           `}
         >
-          <div className="h-full flex flex-col w-full md:w-[380px]">
+          <div className="h-full flex flex-col w-full md:w-[360px]">
             <div className="flex-1 overflow-hidden">
               <TabPanel
                 npaContent={<NPAList items={sampleNPAItems} />}
-                qaContent={<DocumentViewer content={<QAContent />} />}
+                qaContent={<QAContent />}
               />
             </div>
           </div>
@@ -134,12 +133,12 @@ const Index = () => {
         variant="ghost"
         size="icon"
         onClick={() => setIsSidePanelOpen(!isSidePanelOpen)}
-        className="fixed bottom-4 right-4 z-30 md:hidden h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
+        className="fixed bottom-4 right-4 z-30 md:hidden h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
       >
         {isSidePanelOpen ? (
-          <PanelRightClose className="h-5 w-5" />
+          <PanelRightClose className="h-4 w-4" />
         ) : (
-          <PanelRightOpen className="h-5 w-5" />
+          <PanelRightOpen className="h-4 w-4" />
         )}
       </Button>
 
