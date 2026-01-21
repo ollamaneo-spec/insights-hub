@@ -45,6 +45,11 @@
     --sidebar-width: 420px;
     --section-bg: 0 0% 99%;
 
+    /* Answer text colors */
+    --answer-npa: 210 80% 45%;
+    --answer-ai: 340 80% 50%;
+    --answer-user: 0 0% 15%;
+
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 15%;
     --sidebar-primary: 270 60% 55%;
@@ -91,6 +96,11 @@
     --document-bg: 0 0% 12%;
     --section-bg: 0 0% 14%;
 
+    /* Answer text colors - dark mode */
+    --answer-npa: 210 70% 60%;
+    --answer-ai: 340 70% 65%;
+    --answer-user: 0 0% 90%;
+
     --sidebar-background: 0 0% 12%;
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 270 60% 60%;
@@ -124,6 +134,19 @@
   
   .highlight-blue {
     background-color: hsl(var(--highlight-blue));
+  }
+
+  /* Answer text color classes */
+  .text-answer-npa {
+    color: hsl(var(--answer-npa));
+  }
+
+  .text-answer-ai {
+    color: hsl(var(--answer-ai));
+  }
+
+  .text-answer-user {
+    color: hsl(var(--answer-user));
   }
 
   .document-content {
