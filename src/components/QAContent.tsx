@@ -169,19 +169,10 @@ const QAContent = () => {
           <Section 
             title="Ответ из БД" 
             onExpand={() => setExpandedSection("answer")}
-            maxHeight="max-h-40"
-          >
-            {answerContent}
-          </Section>
-
-          {/* Связанные документы */}
-          <Section 
-            title="Связанные документы" 
-            onExpand={() => setExpandedSection("documents")}
             maxHeight="max-h-none"
             className="flex-1"
           >
-            {documentsContent}
+            {answerContent}
           </Section>
         </div>
       </ScrollArea>
@@ -205,17 +196,6 @@ const QAContent = () => {
           </DialogHeader>
           <ScrollArea className="flex-1 pr-4">
             <div className="py-6 text-lg leading-relaxed">{answerContent}</div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={expandedSection === "documents"} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
-          <DialogHeader className="pb-4 border-b border-border">
-            <DialogTitle className="text-2xl font-bold">Связанные документы</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="flex-1 pr-4">
-            <div className="py-6 text-base">{documentsContent}</div>
           </ScrollArea>
         </DialogContent>
       </Dialog>
