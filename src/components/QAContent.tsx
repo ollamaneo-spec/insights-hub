@@ -80,21 +80,25 @@ const QAContent = () => {
   };
 
   const questionContent = (
-    <p className="text-muted-foreground text-xs leading-relaxed">
-      Какие основания/индивидуальным предпринимателям обязаны указывать тег 1125 "Признаки расчета в "Интернет"* в кассовом чеке?
+    <p className="text-foreground text-sm leading-relaxed">
+      Какие основания/индивидуальным предпринимателям обязаны указывать тег 1125 "Признаки расчета в "Интернет"* в кассовом чеке? Обязательно ли указывать исключительно предпринимателю/ организации которые имеют Интернет, или только тем, кто продает товары, подходящие под маркировку?
     </p>
   );
 
   const answerContent = (
-    <div className="text-muted-foreground text-xs">
-      <p className="mb-2">
+    <div className="text-foreground text-sm">
+      <p className="mb-3 leading-relaxed">
         Согласно приказу ФНС России от 26.03.2025 № ЕД-7-20/336@, тег 1125 "Признаки расчета в "Интернет" является обязательным реквизитом для следующих случаев:
       </p>
-      <ul className="list-disc pl-5 space-y-1">
+      <ul className="list-disc pl-5 space-y-2 leading-relaxed">
         <li>При осуществлении расчетов в безналичном порядке через Интернет</li>
         <li>При использовании автоматических устройств для расчетов</li>
         <li>При дистанционной торговле маркированными товарами</li>
+        <li>При расчетах через торговые маркетплейсы и агрегаторы</li>
       </ul>
+      <p className="mt-3 leading-relaxed">
+        При использовании онлайн-платежей в реквизит "место расчетов" (тег 1187) должен содержать адрес сайта в сети Интернет.
+      </p>
     </div>
   );
 
@@ -164,7 +168,7 @@ const QAContent = () => {
   );
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col pt-2">
       <ScrollArea className="flex-1">
         {/* Вопрос */}
         <Section 
@@ -230,9 +234,9 @@ interface SectionProps {
 }
 
 const Section = ({ title, children, onExpand }: SectionProps) => (
-  <section className="border-b border-border bg-card">
-    <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 bg-muted/30">
-      <h3 className="font-semibold text-sm text-foreground tracking-tight">{title}</h3>
+  <section className="border border-border rounded-md bg-card mb-2 mx-2 overflow-hidden">
+    <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/40">
+      <h3 className="font-bold text-sm text-foreground">{title}</h3>
       {onExpand && (
         <Button
           variant="ghost"
@@ -245,7 +249,9 @@ const Section = ({ title, children, onExpand }: SectionProps) => (
         </Button>
       )}
     </div>
-    <div className="p-3">{children}</div>
+    <ScrollArea className="max-h-32">
+      <div className="p-3">{children}</div>
+    </ScrollArea>
   </section>
 );
 

@@ -23,9 +23,9 @@ const SectionBlock = ({
 
   return (
     <>
-      <section className={`border-b border-border bg-card ${className}`}>
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50 bg-muted/30">
-          <h3 className="font-bold text-base text-foreground tracking-tight">
+      <section className={`border border-border rounded-md bg-card mb-2 overflow-hidden ${className}`}>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/40">
+          <h3 className="font-bold text-base text-foreground">
             {title}
           </h3>
           {allowExpand && (
@@ -40,7 +40,7 @@ const SectionBlock = ({
             </Button>
           )}
         </div>
-        <ScrollArea className={`${maxHeight} scrollbar-thin`}>
+        <ScrollArea className={`${maxHeight}`}>
           <div className="p-4">
             {children}
           </div>
