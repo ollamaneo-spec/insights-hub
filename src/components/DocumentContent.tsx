@@ -24,39 +24,39 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
   );
 
   return (
-    <div className="flex flex-col h-full p-3 gap-0">
-      {/* Текст обращения */}
-      <SectionBlock title="Текст обращения" maxHeight="max-h-32">
-        {isEditing ? (
-          <textarea
-            value={appealText}
-            onChange={(e) => setAppealText(e.target.value)}
-            className="w-full min-h-[100px] p-3 text-sm text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
-          />
-        ) : (
-          <div className="text-foreground whitespace-pre-line text-sm leading-relaxed">
-            {appealText}
-          </div>
-        )}
+    <div className="flex flex-col h-full p-4 gap-3">
+      {/* Текст обращения - увеличенный блок */}
+      <SectionBlock title="Текст обращения" maxHeight="max-h-36">
+        <div className="text-foreground whitespace-pre-line text-base leading-relaxed">
+          {isEditing ? (
+            <textarea
+              value={appealText}
+              onChange={(e) => setAppealText(e.target.value)}
+              className="w-full min-h-[120px] p-3 text-base text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+            />
+          ) : (
+            appealText
+          )}
+        </div>
       </SectionBlock>
 
       {/* Суть обращения */}
-      <SectionBlock title="Суть обращения" maxHeight="max-h-20">
-        {isEditing ? (
-          <textarea
-            value={essenceText}
-            onChange={(e) => setEssenceText(e.target.value)}
-            className="w-full min-h-[40px] p-3 text-sm text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
-          />
-        ) : (
-          <div className="text-foreground text-sm leading-relaxed">
-            {essenceText}
-          </div>
-        )}
+      <SectionBlock title="Суть обращения" maxHeight="max-h-24">
+        <div className="text-foreground text-base leading-relaxed">
+          {isEditing ? (
+            <textarea
+              value={essenceText}
+              onChange={(e) => setEssenceText(e.target.value)}
+              className="w-full min-h-[50px] p-3 text-base text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+            />
+          ) : (
+            essenceText
+          )}
+        </div>
       </SectionBlock>
 
-      {/* Ответ - fills remaining space */}
-      <SectionBlock title="Ответ" maxHeight="max-h-[350px]" className="flex-1">
+      {/* Ответ - заполняет оставшееся пространство */}
+      <SectionBlock title="Ответ" maxHeight="max-h-none" className="flex-1 min-h-0">
         <AnswerSection />
       </SectionBlock>
     </div>

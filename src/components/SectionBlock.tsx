@@ -21,11 +21,15 @@ const SectionBlock = ({
 }: SectionBlockProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Определяем классы для высоты - если max-h-none, используем flex-1 для заполнения
+  const heightClass = maxHeight === "max-h-none" ? "flex-1" : maxHeight;
+  const isFlexible = maxHeight === "max-h-none";
+
   return (
     <>
-      <section className={`border border-border rounded-md bg-card mb-2 overflow-hidden ${className}`}>
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/40">
-          <h3 className="font-bold text-base text-foreground">
+      <section className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/40 flex-shrink-0">
+          <h3 className="font-bold text-lg text-foreground">
             {title}
           </h3>
           {allowExpand && (
@@ -40,7 +44,7 @@ const SectionBlock = ({
             </Button>
           )}
         </div>
-        <ScrollArea className={`${maxHeight}`}>
+        <ScrollArea className={`${isFlexible ? "flex-1" : heightClass}`}>
           <div className="p-4">
             {children}
           </div>
