@@ -196,30 +196,20 @@ const AnswerSection = () => {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" />
+        <DialogContent className="w-[80vw] max-w-[80vw] h-[80vh] max-h-[80vh] flex flex-col">
+          <DialogHeader className="pb-4 border-b border-border flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+              <Pencil className="h-5 w-5" />
               Изменить с помощью ИИ
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <div className="flex-1 flex flex-col gap-4 py-4 overflow-auto">
             <div>
               <p className="text-sm text-muted-foreground mb-2">Выделенный текст:</p>
-              <div className="p-3 bg-muted rounded text-sm border border-border">
+              <div className="p-3 bg-muted text-sm border border-border max-h-[150px] overflow-auto">
                 {selectedText}
               </div>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">Редактирование:</p>
-              <Textarea
-                value={editedText}
-                onChange={(e) => setEditedText(e.target.value)}
-                className="min-h-[120px]"
-                placeholder="Отредактируйте текст..."
-              />
             </div>
 
             <div>
@@ -229,6 +219,16 @@ const AnswerSection = () => {
                 onChange={(e) => setInstruction(e.target.value)}
                 className="min-h-[80px]"
                 placeholder="Введите промпт - инструкцию для ИИ"
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col min-h-0">
+              <p className="text-sm text-muted-foreground mb-2">Редактирование:</p>
+              <Textarea
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+                className="flex-1 min-h-[150px]"
+                placeholder="Отредактируйте текст..."
               />
             </div>
 
