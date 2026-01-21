@@ -44,23 +44,23 @@ const NPAList = ({ items }: NPAListProps) => {
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="p-4 border-b border-border">
-        <h2 className="font-semibold text-foreground">Найденные документы</h2>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h2 className="font-bold text-sm text-foreground">Найденные документы</h2>
+        <p className="text-xs text-muted-foreground mt-1">
           {items.length} документов
         </p>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-2 space-y-2">
+        <div className="p-3 space-y-2">
           {items.map((item) => (
             <Collapsible
               key={item.id}
               open={openItems.includes(item.id)}
               onOpenChange={() => toggleItem(item.id)}
             >
-              <div className="border border-border rounded-lg overflow-hidden">
+              <div className="border border-border rounded-md overflow-hidden bg-background">
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-left p-3 hover:bg-accent/50 transition-colors flex items-start gap-2">
+                  <button className="w-full text-left p-3 hover:bg-muted/50 transition-colors flex items-start gap-2">
                     {openItems.includes(item.id) ? (
                       <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                     ) : (
@@ -86,7 +86,7 @@ const NPAList = ({ items }: NPAListProps) => {
                             <Badge
                               key={tag}
                               variant="secondary"
-                              className="text-xs px-2 py-0"
+                              className="text-xs px-2 py-0 bg-muted text-muted-foreground"
                             >
                               {tag}
                             </Badge>
@@ -98,7 +98,7 @@ const NPAList = ({ items }: NPAListProps) => {
                 </CollapsibleTrigger>
 
                 <CollapsibleContent>
-                  <div className="border-t border-border bg-muted/20">
+                  <div className="border-t border-border">
                     {item.paragraphs.map((paragraph) => (
                       <ParagraphItem
                         key={paragraph.id}
@@ -135,7 +135,7 @@ const ParagraphItem = ({ paragraph, copiedId, onCopy }: ParagraphItemProps) => {
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className="border-b border-border last:border-b-0">
         <CollapsibleTrigger asChild>
-          <button className="w-full text-left px-4 py-2 hover:bg-accent/30 transition-colors flex items-center gap-2">
+          <button className="w-full text-left px-4 py-2.5 hover:bg-muted/30 transition-colors flex items-center gap-2">
             {isOpen ? (
               <ChevronDown className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             ) : (
@@ -149,7 +149,7 @@ const ParagraphItem = ({ paragraph, copiedId, onCopy }: ParagraphItemProps) => {
 
         <CollapsibleContent>
           <div className="px-4 pb-3">
-            <div className="bg-background p-3 rounded border border-border relative group">
+            <div className="bg-muted/30 p-3 rounded-md border border-border relative group">
               <p className="text-xs text-muted-foreground leading-relaxed pr-8 select-text">
                 {paragraph.text}
               </p>
@@ -160,7 +160,7 @@ const ParagraphItem = ({ paragraph, copiedId, onCopy }: ParagraphItemProps) => {
                 onClick={() => onCopy(paragraph.text, paragraph.id)}
               >
                 {copiedId === paragraph.id ? (
-                  <Check className="h-3 w-3 text-green-500" />
+                  <Check className="h-3 w-3 text-primary" />
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}

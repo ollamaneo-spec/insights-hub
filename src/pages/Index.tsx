@@ -78,6 +78,11 @@ const sampleNPAItems = [
 
 const Index = () => {
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleFilesSelected = (files: FileList) => {
+    console.log("Файлы загружены:", Array.from(files).map(f => f.name));
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -86,16 +91,19 @@ const Index = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Left: Document Content with File Upload on top */}
         <div className="flex-1 flex flex-col min-w-0 border-r border-border">
-          {/* File Upload Bar - at top of left column, 1.5x bigger */}
-          <FileUploadBar />
+          {/* File Upload Bar */}
+          <FileUploadBar onFilesSelected={handleFilesSelected} />
           
           {/* Document Content */}
           <div className="flex-1 overflow-auto">
-            <DocumentViewer content={<DocumentContent />} />
+            <DocumentViewer content={<DocumentContent isEditing={isEditing} />} />
           </div>
           
           {/* Action Buttons */}
-          <ActionButtons />
+          <ActionButtons 
+            onEditMode={() => setIsEditing(!isEditing)} 
+            isEditing={isEditing}
+          />
           
           {/* Comments Section at bottom */}
           <CommentPanel />

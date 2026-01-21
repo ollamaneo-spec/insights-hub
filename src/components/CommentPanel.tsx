@@ -20,15 +20,15 @@ const CommentPanel = () => {
   };
 
   return (
-    <div className="section-block">
-      <h3 className="section-title">Комментарии:</h3>
+    <div className="border-t border-border bg-card p-5">
+      <h3 className="font-bold text-sm text-foreground mb-3">Комментарии:</h3>
       <div className="space-y-3">
         <Textarea
           placeholder="Введите комментарий..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           disabled={!isEditing && comment === ""}
-          className="min-h-[80px] resize-none bg-background border-input focus:ring-primary"
+          className="min-h-[80px] resize-none bg-background border-input focus:ring-ring text-sm"
         />
         <div className="flex gap-2 justify-end">
           <Button
