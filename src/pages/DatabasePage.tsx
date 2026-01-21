@@ -1,4 +1,5 @@
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Appeal {
   id: string;
@@ -19,6 +26,11 @@ interface Appeal {
   status: "В работе" | "На рассмотрении" | "Утвержден";
   officialLetterLink: string;
   hasWorkspaceLink?: boolean;
+}
+
+interface DocumentItem {
+  name: string;
+  link: string;
 }
 
 const getStatusStyle = (status: Appeal["status"]) => {
@@ -33,6 +45,13 @@ const getStatusStyle = (status: Appeal["status"]) => {
       return "bg-muted text-foreground";
   }
 };
+
+const documentsList: DocumentItem[] = [
+  { name: "Письмо", link: "https://www.consultant.ru/document/cons_doc_LAW_42359/" },
+  { name: "Приложение №1", link: "https://www.consultant.ru/document/cons_doc_LAW_42359/" },
+  { name: "Приложение №2", link: "https://www.nalog.gov.ru/rn77/taxation/kkt/" },
+  { name: "Приложение №3", link: "https://www.nalog.gov.ru/rn77/service/" },
+];
 
 const syntheticData: Appeal[] = [
   {
@@ -129,6 +148,14 @@ const syntheticData: Appeal[] = [
 ];
 
 const DatabasePage = () => {
+  const [documentsDialogOpen, setDocumentsDialogOpen] = useState(false);
+  const [selectedAppealId, setSelectedAppealId] = useState<string | null>(null);
+
+  const handleOpenDocuments = (appealId: string) => {
+    setSelectedAppealId(appealId);
+    setDocumentsDialogOpen(true);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -177,14 +204,12 @@ const DatabasePage = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <a
-                      href={appeal.documentsLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:underline text-xs"
+                    <button
+                      onClick={() => handleOpenDocuments(appeal.id)}
+                      className="inline-flex items-center gap-1 text-primary hover:underline text-xs cursor-pointer"
                     >
                       Открыть <ExternalLink className="h-3 w-3" />
-                    </a>
+                    </button>
                   </TableCell>
                   <TableCell className="font-mono text-xs">{appeal.answerId}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{appeal.comments}</TableCell>
@@ -209,6 +234,38 @@ const DatabasePage = () => {
           </Table>
         </div>
       </div>
+
+      {/* Documents Dialog */}
+      <Dialog open={documentsDialogOpen} onOpenChange={setDocumentsDialogOpen}>
+        <DialogContent className="w-[80vw] max-w-[80vw] h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">
+              Документы по обращению {selectedAppealId}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto mt-4">
+            <div className="space-y-3">
+              {documentsList.map((doc, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                  <a
+                    href={doc.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline flex items-center gap-2"
+                  >
+                    {doc.name}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
