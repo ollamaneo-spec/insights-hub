@@ -20,7 +20,8 @@ const CommentPanel = () => {
   };
 
   return (
-    <div className="border-t border-border bg-card p-4">
+    <div className="section-block">
+      <h3 className="section-title">Комментарии:</h3>
       <div className="space-y-3">
         <Textarea
           placeholder="Введите комментарий..."
