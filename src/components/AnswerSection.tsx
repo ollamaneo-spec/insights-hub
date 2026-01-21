@@ -141,8 +141,7 @@ const AnswerSection = () => {
     // Simulate AI processing - this will be connected to API later
     await new Promise((resolve) => setTimeout(resolve, 1500));
     
-    // For demo: just add a note that AI processed it
-    setEditedText((prev) => `${prev} [отредактировано ИИ]`);
+    // AI processing complete - text remains as is for user review
     setIsProcessing(false);
   };
 
