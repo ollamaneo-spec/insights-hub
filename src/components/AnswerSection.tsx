@@ -164,7 +164,7 @@ const AnswerSection = () => {
   return (
     <>
       <div
-        className="space-y-4 cursor-text select-text"
+        className="space-y-3 cursor-text select-text"
         onMouseUp={handleTextSelection}
       >
         {segments.map((segment) => (

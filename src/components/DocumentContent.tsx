@@ -15,46 +15,48 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
 2. Тег 1234 "Сведения об остатках по мету безналичных"*
 Планируется ли в будущем сделать тег 1234 обязательным реквизитом кассового чека? Если да, то когда?
 
-3. Применяется ли тег 1236 только к маркированным товарам или его использование распространяется на все товары/услуги, отпущенные безналичным способом?`);
+3. Применяется ли тег 1236 только к маркированным товарам или его использование распространяется на все товары/услуги, отпущенные безналичным способом?
+
+4. Каким образом следует заполнять поле "место расчетов" (тег 1187) при осуществлении расчетов через интернет-магазин?`);
 
   const [essenceText, setEssenceText] = useState(
-    "об обязательности применения новых реквизитов кассового чека (теги 1125 и 1230) для онлайн-платежей и безналичных расчетов."
+    "Разъяснение об обязательности применения новых реквизитов кассового чека (теги 1125, 1230, 1234, 1236) для онлайн-платежей и безналичных расчетов согласно приказу ФНС от 26.03.2025 № ЕД-7-20/336@."
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full p-3 gap-0">
       {/* Текст обращения */}
-      <SectionBlock title="Текст обращения" maxHeight="max-h-36">
+      <SectionBlock title="Текст обращения" maxHeight="max-h-32">
         {isEditing ? (
           <textarea
             value={appealText}
             onChange={(e) => setAppealText(e.target.value)}
-            className="w-full min-h-[100px] p-3 text-sm text-muted-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+            className="w-full min-h-[100px] p-3 text-sm text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
           />
         ) : (
-          <div className="text-muted-foreground whitespace-pre-line text-sm leading-relaxed">
+          <div className="text-foreground whitespace-pre-line text-sm leading-relaxed">
             {appealText}
           </div>
         )}
       </SectionBlock>
 
       {/* Суть обращения */}
-      <SectionBlock title="Суть обращения" maxHeight="max-h-16">
+      <SectionBlock title="Суть обращения" maxHeight="max-h-20">
         {isEditing ? (
           <textarea
             value={essenceText}
             onChange={(e) => setEssenceText(e.target.value)}
-            className="w-full min-h-[40px] p-3 text-sm text-muted-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
+            className="w-full min-h-[40px] p-3 text-sm text-foreground bg-background border border-input rounded resize-none focus:outline-none focus:ring-1 focus:ring-ring leading-relaxed"
           />
         ) : (
-          <div className="text-muted-foreground text-sm leading-relaxed">
+          <div className="text-foreground text-sm leading-relaxed">
             {essenceText}
           </div>
         )}
       </SectionBlock>
 
       {/* Ответ */}
-      <SectionBlock title="Ответ" maxHeight="max-h-[320px]" className="flex-1">
+      <SectionBlock title="Ответ" maxHeight="max-h-[280px]" className="flex-1">
         <AnswerSection />
       </SectionBlock>
     </div>
