@@ -9,6 +9,11 @@ import CommentPanel from "@/components/CommentPanel";
 import ActionButtons from "@/components/ActionButtons";
 import { Button } from "@/components/ui/button";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 
 const sampleNPAItems = [
   {
@@ -83,38 +88,43 @@ const Index = () => {
     console.log("Файлы загружены:", Array.from(files).map(f => f.name));
   };
 
-    return (
+  return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Header />
 
-      <div className="flex-1 flex overflow-hidden min-h-0">
-        {/* Left: Document Content - 70% */}
-        <div className="flex flex-col min-w-0 w-[70%]">
-          {/* File Upload Bar */}
-          <FileUploadBar onFilesSelected={handleFilesSelected} />
-          
-          {/* Document Content - scrollable area */}
-          <div className="flex-1 overflow-auto min-h-0">
-            <DocumentContent isEditing={isEditing} />
+      <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
+        {/* Left: Document Content */}
+        <ResizablePanel defaultSize={70} minSize={40} maxSize={85}>
+          <div className="flex flex-col h-full">
+            {/* File Upload Bar */}
+            <FileUploadBar onFilesSelected={handleFilesSelected} />
+            
+            {/* Document Content - scrollable area */}
+            <div className="flex-1 overflow-auto min-h-0">
+              <DocumentContent isEditing={isEditing} />
+            </div>
+            
+            {/* Action Buttons - fixed at bottom */}
+            <ActionButtons 
+              onEditMode={() => setIsEditing(!isEditing)} 
+              isEditing={isEditing}
+            />
+            
+            {/* Comments Section at bottom */}
+            <CommentPanel />
           </div>
-          
-          {/* Action Buttons - fixed at bottom */}
-          <ActionButtons 
-            onEditMode={() => setIsEditing(!isEditing)} 
-            isEditing={isEditing}
-          />
-          
-          {/* Comments Section at bottom */}
-          <CommentPanel />
-        </div>
+        </ResizablePanel>
 
-        {/* Right: Tab Panel (НПА / Q&A) - 30% */}
-        <div
+        <ResizableHandle withHandle className="bg-border hover:bg-primary/20 transition-colors" />
+
+        {/* Right: Tab Panel (НПА / Q&A) */}
+        <ResizablePanel 
+          defaultSize={30} 
+          minSize={15} 
+          maxSize={60}
           className={`
-            ${isSidePanelOpen ? "w-full md:w-[30%]" : "w-0"} 
-            flex-shrink-0 transition-all duration-300 overflow-hidden border-l border-border
-            fixed md:relative inset-y-0 right-0 z-20 bg-card md:bg-transparent
-            ${isSidePanelOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
+            ${isSidePanelOpen ? "" : "hidden md:block"} 
+            border-l border-border
           `}
         >
           <div className="h-full flex flex-col w-full">
@@ -125,8 +135,8 @@ const Index = () => {
               />
             </div>
           </div>
-        </div>
-      </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
 
       {/* Toggle Button for Side Panel (Mobile) */}
       <Button
