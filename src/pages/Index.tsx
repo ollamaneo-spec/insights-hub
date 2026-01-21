@@ -89,7 +89,7 @@ const Index = () => {
 
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Left: Document Content with File Upload on top */}
-        <div className="flex-1 flex flex-col min-w-0 border-r border-border">
+        <div className="flex-1 flex flex-col min-w-0 border-r border-border max-w-[calc(100%-320px)]">
           {/* File Upload Bar */}
           <FileUploadBar onFilesSelected={handleFilesSelected} />
           
@@ -108,16 +108,16 @@ const Index = () => {
           <CommentPanel />
         </div>
 
-        {/* Right: Tab Panel (НПА / Q&A) */}
+        {/* Right: Tab Panel (НПА / Q&A) - wider */}
         <div
           className={`
-            ${isSidePanelOpen ? "w-full md:w-[360px]" : "w-0"} 
+            ${isSidePanelOpen ? "w-full md:w-[320px]" : "w-0"} 
             flex-shrink-0 transition-all duration-300 overflow-hidden
             fixed md:relative inset-y-0 right-0 z-20 bg-card md:bg-transparent
             ${isSidePanelOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
           `}
         >
-          <div className="h-full flex flex-col w-full md:w-[360px]">
+          <div className="h-full flex flex-col w-full md:w-[320px]">
             <div className="flex-1 overflow-hidden">
               <TabPanel
                 npaContent={<NPAList items={sampleNPAItems} />}
