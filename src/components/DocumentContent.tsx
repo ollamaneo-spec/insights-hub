@@ -55,8 +55,8 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         )}
       </SectionBlock>
 
-      {/* Ответ */}
-      <SectionBlock title="Ответ" maxHeight="max-h-[280px]" className="flex-1">
+      {/* Ответ - fills remaining space */}
+      <SectionBlock title="Ответ" maxHeight="max-h-[350px]" className="flex-1">
         <AnswerSection />
       </SectionBlock>
     </div>
