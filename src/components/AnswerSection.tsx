@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,13 @@ interface TextSegment {
   type: SegmentType;
   text: string;
 }
+
+// Color constants for segment types (HSL from design tokens)
+const SEGMENT_COLORS = {
+  npa: "hsl(210, 80%, 45%)", // Blue - NPA norms
+  ai: "hsl(0, 75%, 50%)",    // Red - AI generated
+  user: "hsl(0, 0%, 15%)",   // Black - User modified
+};
 
 const initialSegments: TextSegment[] = [
   {
@@ -92,11 +99,45 @@ const initialSegments: TextSegment[] = [
   },
 ];
 
+// Parse HTML content back to segments
+const parseHtmlToSegments = (html: string): TextSegment[] => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const paragraphs = doc.querySelectorAll("p");
+  
+  const segments: TextSegment[] = [];
+  
+  paragraphs.forEach((p, index) => {
+    const style = p.getAttribute("style") || "";
+    const text = p.textContent || "";
+    
+    if (!text.trim()) return;
+    
+    // Determine type by color in style
+    let type: SegmentType = "user"; // Default to user (black)
+    
+    if (style.includes("210") || style.includes("rgb(37, 99, 235)") || style.includes("45%")) {
+      type = "npa"; // Blue
+    } else if (style.includes("0, 75%") || style.includes("rgb(220, 38, 38)") || style.includes("hsl(0")) {
+      type = "ai"; // Red
+    }
+    
+    segments.push({
+      id: `parsed-${index}`,
+      type,
+      text: text.replace(/<br\s*\/?>/gi, "\n"),
+    });
+  });
+  
+  return segments.length > 0 ? segments : initialSegments;
+};
+
 interface AnswerSectionProps {
   isEditing?: boolean;
+  onEditingChange?: (isEditing: boolean) => void;
 }
 
-const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
+const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProps) => {
   const [segments, setSegments] = useState<TextSegment[]>(initialSegments);
   const [selectedText, setSelectedText] = useState("");
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null);
@@ -105,21 +146,30 @@ const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
   const [instruction, setInstruction] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [editorContent, setEditorContent] = useState("");
+  const [aiEditedText, setAiEditedText] = useState(false); // Track if AI edited
+  const wasEditingRef = useRef(isEditing);
 
-  // Convert segments to HTML for editor
+  // Convert segments to HTML for editor with proper colors
   const segmentsToHtml = useMemo(() => {
     return segments
       .map((seg) => {
-        const colorClass =
-          seg.type === "npa"
-            ? "color: rgb(37, 99, 235);"
-            : seg.type === "ai"
-            ? "color: rgb(220, 38, 38);"
-            : "color: rgb(0, 0, 0);";
-        return `<p style="${colorClass}">${seg.text.replace(/\n/g, "<br>")}</p>`;
+        const color = SEGMENT_COLORS[seg.type];
+        // Preserve line breaks as <br> tags
+        const textWithBreaks = seg.text.replace(/\n/g, "<br>");
+        return `<p style="color: ${color};">${textWithBreaks}</p>`;
       })
       .join("");
   }, [segments]);
+
+  // Handle exiting edit mode - parse HTML back to segments
+  useEffect(() => {
+    if (wasEditingRef.current && !isEditing && editorContent) {
+      // Exiting edit mode - save changes
+      const newSegments = parseHtmlToSegments(editorContent);
+      setSegments(newSegments);
+    }
+    wasEditingRef.current = isEditing;
+  }, [isEditing, editorContent]);
 
   const getSegmentClassName = (type: SegmentType): string => {
     switch (type) {
@@ -164,7 +214,8 @@ const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
     // Simulate AI processing - this will be connected to API later
     await new Promise((resolve) => setTimeout(resolve, 1500));
     
-    // AI processing complete - text remains as is for user review
+    // Mark as AI edited - text will be colored red when saved
+    setAiEditedText(true);
     setIsProcessing(false);
   };
 
@@ -179,7 +230,8 @@ const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
           return {
             ...seg,
             text: newText,
-            type: "user" as SegmentType, // Mark as user-modified
+            // Mark as AI-modified (red) if AI edited, otherwise user-modified (black)
+            type: aiEditedText ? "ai" as SegmentType : "user" as SegmentType,
           };
         }
         return seg;
@@ -190,6 +242,7 @@ const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
     setSelectedText("");
     setSelectedSegmentId(null);
     setEditedText("");
+    setAiEditedText(false);
   };
 
   const handleClose = () => {
@@ -198,6 +251,7 @@ const AnswerSection = ({ isEditing = false }: AnswerSectionProps) => {
     setSelectedSegmentId(null);
     setEditedText("");
     setInstruction("");
+    setAiEditedText(false);
   };
 
   const handleEditorChange = (content: string) => {

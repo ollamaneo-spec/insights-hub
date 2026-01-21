@@ -4,7 +4,9 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
+import { Color } from "@tiptap/extension-color";
 import RichTextToolbar from "./RichTextToolbar";
+import { useEffect } from "react";
 
 interface RichTextEditorProps {
   content: string;
@@ -27,6 +29,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       Underline,
       TextStyle,
       FontFamily,
+      Color,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -42,6 +45,13 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       },
     },
   });
+
+  // Update editor content when prop changes
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
 
   return (
     <div className="border border-border bg-background">
