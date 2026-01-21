@@ -1,45 +1,29 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Pencil, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 const CommentPanel = () => {
   const [comment, setComment] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
 
   const handleSend = () => {
     if (comment.trim()) {
       console.log("Отправка комментария:", comment);
       setComment("");
-      setIsEditing(false);
     }
   };
 
   return (
-    <div className="border-t border-border bg-card p-5">
-      <h3 className="font-bold text-sm text-foreground mb-3">Комментарии:</h3>
-      <div className="space-y-3">
+    <div className="border-t border-border bg-card p-4">
+      <h3 className="font-bold text-sm text-foreground mb-2">Комментарии:</h3>
+      <div className="space-y-2">
         <Textarea
           placeholder="Введите комментарий..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          disabled={!isEditing && comment === ""}
-          className="min-h-[80px] resize-none bg-background border-input focus:ring-ring text-sm"
+          className="min-h-[60px] resize-none bg-background border-input focus:ring-ring text-sm"
         />
-        <div className="flex gap-2 justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEdit}
-            className="gap-2"
-          >
-            <Pencil className="h-4 w-4" />
-            Редактировать
-          </Button>
+        <div className="flex gap-2 justify-start">
           <Button
             size="sm"
             onClick={handleSend}

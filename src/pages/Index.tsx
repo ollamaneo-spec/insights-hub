@@ -112,13 +112,13 @@ const Index = () => {
         {/* Right: Tab Panel (НПА / Q&A) */}
         <div
           className={`
-            ${isSidePanelOpen ? "w-full md:w-[420px]" : "w-0"} 
+            ${isSidePanelOpen ? "w-full md:w-[380px]" : "w-0"} 
             flex-shrink-0 transition-all duration-300 overflow-hidden
             fixed md:relative inset-y-0 right-0 z-20 bg-card md:bg-transparent
             ${isSidePanelOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
           `}
         >
-          <div className="h-full flex flex-col w-full md:w-[420px]">
+          <div className="h-full flex flex-col w-full md:w-[380px]">
             <div className="flex-1 overflow-hidden">
               <TabPanel
                 npaContent={<NPAList items={sampleNPAItems} />}

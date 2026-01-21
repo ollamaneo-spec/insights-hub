@@ -43,9 +43,9 @@ const NPAList = ({ items }: NPAListProps) => {
 
   return (
     <div className="h-full flex flex-col bg-card">
-      <div className="p-4 border-b border-border">
+      <div className="p-3 border-b border-border">
         <h2 className="font-bold text-sm text-foreground">Найденные документы</h2>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-0.5">
           {items.length} документов
         </p>
       </div>
@@ -105,6 +105,7 @@ const NPAList = ({ items }: NPAListProps) => {
                         paragraph={paragraph}
                         copiedId={copiedId}
                         onCopy={copyToClipboard}
+                        link={item.link}
                       />
                     ))}
                   </div>
@@ -128,35 +129,52 @@ interface ParagraphItemProps {
   onCopy: (text: string, id: string) => void;
 }
 
-const ParagraphItem = ({ paragraph, copiedId, onCopy }: ParagraphItemProps) => {
+interface ParagraphItemPropsExtended extends ParagraphItemProps {
+  link?: string;
+}
+
+const ParagraphItem = ({ paragraph, copiedId, onCopy, link }: ParagraphItemPropsExtended) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className="border-b border-border last:border-b-0">
         <CollapsibleTrigger asChild>
-          <button className="w-full text-left px-4 py-2.5 hover:bg-muted/30 transition-colors flex items-center gap-2">
+          <button className="w-full text-left px-4 py-2 hover:bg-muted/30 transition-colors flex items-center gap-2">
             {isOpen ? (
               <ChevronDown className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             ) : (
               <ChevronRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
             )}
-            <span className="text-xs font-medium text-foreground">
-              {paragraph.number}
-            </span>
+            {link ? (
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+              >
+                {paragraph.number}
+                <ExternalLink className="h-2.5 w-2.5" />
+              </a>
+            ) : (
+              <span className="text-xs font-medium text-foreground">
+                {paragraph.number}
+              </span>
+            )}
           </button>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="px-4 pb-3">
-            <div className="bg-muted/30 p-3 rounded-md border border-border relative group">
+          <div className="px-4 pb-2">
+            <div className="bg-muted/30 p-2 rounded-md border border-border relative group">
               <p className="text-xs text-muted-foreground leading-relaxed pr-8 select-text">
                 {paragraph.text}
               </p>
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => onCopy(paragraph.text, paragraph.id)}
               >
                 {copiedId === paragraph.id ? (

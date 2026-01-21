@@ -23,41 +23,41 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
   return (
     <div className="space-y-0 text-sm leading-relaxed text-foreground">
       {/* Текст обращения */}
-      <section className="border-b border-border bg-card p-5">
-        <h3 className="font-bold text-sm text-foreground mb-3">Текст обращения:</h3>
+      <section className="border-b border-border bg-card p-4">
+        <h3 className="font-bold text-sm text-foreground mb-2">Текст обращения:</h3>
         {isEditing ? (
           <textarea
             value={appealText}
             onChange={(e) => setAppealText(e.target.value)}
-            className="w-full min-h-[200px] p-3 text-sm text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full min-h-[140px] p-2 text-xs text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
           />
         ) : (
-          <div className="text-muted-foreground whitespace-pre-line">
+          <div className="text-muted-foreground whitespace-pre-line text-xs">
             {appealText}
           </div>
         )}
       </section>
 
       {/* Суть обращения */}
-      <section className="border-b border-border bg-card p-5">
-        <h3 className="font-bold text-sm text-foreground mb-3">Суть обращения:</h3>
+      <section className="border-b border-border bg-card p-4">
+        <h3 className="font-bold text-sm text-foreground mb-2">Суть обращения:</h3>
         {isEditing ? (
           <textarea
             value={essenceText}
             onChange={(e) => setEssenceText(e.target.value)}
-            className="w-full min-h-[60px] p-3 text-sm text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full min-h-[40px] p-2 text-xs text-muted-foreground bg-background border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
           />
         ) : (
-          <div className="text-muted-foreground">
+          <div className="text-muted-foreground text-xs">
             {essenceText}
           </div>
         )}
       </section>
 
       {/* Ответ */}
-      <section className="border-b border-border bg-card p-5">
-        <h3 className="font-bold text-sm text-foreground mb-3">Ответ:</h3>
-        <p className="text-xs text-muted-foreground mb-3 italic">
+      <section className="border-b border-border bg-card p-4">
+        <h3 className="font-bold text-sm text-foreground mb-2">Ответ:</h3>
+        <p className="text-[10px] text-muted-foreground mb-2 italic">
           Выделите текст для редактирования с помощью ИИ
         </p>
         <AnswerSection />
