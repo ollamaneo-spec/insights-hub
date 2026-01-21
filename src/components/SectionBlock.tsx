@@ -60,18 +60,18 @@ const SectionBlock = ({
     <>
       <section 
         ref={containerRef}
-        className={`border border-border rounded-md bg-card overflow-hidden flex flex-col ${className}`}
+        className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col shadow-sm ${className}`}
         style={resizable && !isFlexible ? { height: `${height}px` } : undefined}
       >
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/40 flex-shrink-0">
-          <h3 className="font-bold text-lg text-foreground">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 flex-shrink-0">
+          <h3 className="font-bold text-base text-foreground tracking-tight">
             {title}
           </h3>
           {allowExpand && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-md transition-colors"
               onClick={() => setIsExpanded(true)}
               title="Открыть на всю страницу"
             >
@@ -80,8 +80,8 @@ const SectionBlock = ({
           )}
         </div>
         {stickyLabel && (
-          <div className="px-4 py-2 border-b border-border bg-muted/20 flex-shrink-0">
-            <span className="inline-block bg-muted border border-border rounded px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <div className="px-4 py-2 border-b border-border/50 bg-muted/10 flex-shrink-0">
+            <span className="inline-block bg-background border border-border rounded-md px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
               {stickyLabel}
             </span>
           </div>
@@ -93,10 +93,10 @@ const SectionBlock = ({
         </ScrollArea>
         {resizable && !isFlexible && (
           <div 
-            className="h-2 bg-muted/60 hover:bg-primary/20 cursor-ns-resize flex items-center justify-center border-t border-border transition-colors"
+            className="h-2.5 bg-muted/40 hover:bg-primary/10 cursor-ns-resize flex items-center justify-center border-t border-border/50 transition-colors"
             onMouseDown={handleMouseDown}
           >
-            <GripHorizontal className="h-3 w-3 text-muted-foreground" />
+            <GripHorizontal className="h-3 w-3 text-muted-foreground/60" />
           </div>
         )}
       </section>
@@ -104,12 +104,12 @@ const SectionBlock = ({
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
         <DialogContent className="w-[85vw] max-w-[85vw] h-[80vh] max-h-[80vh] flex flex-col">
           <DialogHeader className="pb-4 border-b border-border">
-            <DialogTitle className="text-2xl font-bold">
+            <DialogTitle className="text-xl font-bold tracking-tight">
               {stickyLabel ? `${title} — ${stickyLabel}` : title}
             </DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex-1 pr-4">
-            <div className="py-6 text-base leading-relaxed">
+            <div className="py-6 text-lg leading-relaxed">
               {children}
             </div>
           </ScrollArea>

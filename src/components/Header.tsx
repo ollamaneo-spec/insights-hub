@@ -9,10 +9,10 @@ import {
 
 const Header = () => {
   return (
-    <header className="h-11 border-b border-border bg-card px-3 flex items-center justify-between shrink-0">
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground font-semibold text-xs">C</span>
+    <header className="h-12 border-b border-border bg-card px-4 flex items-center justify-between shrink-0 shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm">
+          <span className="text-primary-foreground font-bold text-sm">C</span>
         </div>
         <h1 className="text-sm font-semibold text-foreground hidden sm:block tracking-tight">
           Система обработки вопросов и ответов с ИИ
@@ -22,12 +22,12 @@ const Header = () => {
         </h1>
       </div>
       
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Link to="/database">
-              <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs">
-                <Database className="h-3.5 w-3.5" />
+              <Button variant="outline" size="sm" className="h-8 gap-2 text-xs font-medium border-border hover:bg-accent hover:border-primary/30 transition-colors">
+                <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">БД</span>
               </Button>
             </Link>
@@ -37,8 +37,8 @@ const Header = () => {
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs">
-              <User className="h-3.5 w-3.5" />
+            <Button variant="outline" size="sm" className="h-8 gap-2 text-xs font-medium border-border hover:bg-accent hover:border-primary/30 transition-colors">
+              <User className="h-4 w-4" />
               <span className="hidden sm:inline">Аккаунт</span>
             </Button>
           </TooltipTrigger>
