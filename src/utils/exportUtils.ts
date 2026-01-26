@@ -108,15 +108,18 @@ export const exportToDocx = (htmlContent: string, fileName: string = 'answer') =
 
   // Create blob with Word MIME type
   const blob = new Blob(['\ufeff', wordHtml], {
-    type: 'application/msword'
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   });
 
   // Download
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${fileName}.doc`;
+  link.download = `${fileName}.docx`;
   document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
