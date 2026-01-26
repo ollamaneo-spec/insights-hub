@@ -1,46 +1,64 @@
-import html2pdf from 'html2pdf.js';
-
 /**
- * Export HTML content to PDF file
+ * Export HTML content to PDF using browser's native print dialog
+ * This is a secure alternative that doesn't require vulnerable dependencies
  */
 export const exportToPdf = async (htmlContent: string, fileName: string = 'answer') => {
-  // Create a temporary container with proper styling
-  const container = document.createElement('div');
-  container.innerHTML = htmlContent;
-  container.style.cssText = `
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 14px;
-    line-height: 1.6;
-    padding: 20px;
-    max-width: 800px;
-    color: #000;
-  `;
-  
-  // Temporarily add to DOM for rendering
-  document.body.appendChild(container);
-  
-  const options = {
-    margin: [15, 15, 15, 15],
-    filename: `${fileName}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      logging: false
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait' 
-    }
-  };
-
-  try {
-    await html2pdf().set(options).from(container).save();
-  } finally {
-    // Clean up
-    document.body.removeChild(container);
+  // Create a new window for printing
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    throw new Error('Не удалось открыть окно печати. Проверьте настройки блокировки всплывающих окон.');
   }
+
+  // Write content with print-optimized styling
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>${fileName}</title>
+      <style>
+        @page {
+          size: A4;
+          margin: 2cm;
+        }
+        body {
+          font-family: 'Times New Roman', Times, serif;
+          font-size: 14pt;
+          line-height: 1.6;
+          color: #000;
+          padding: 20px;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        p {
+          margin: 0 0 12pt 0;
+        }
+        @media print {
+          body {
+            padding: 0;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      ${htmlContent}
+    </body>
+    </html>
+  `);
+  
+  printWindow.document.close();
+  
+  // Wait for content to load then trigger print
+  printWindow.onload = () => {
+    printWindow.focus();
+    printWindow.print();
+  };
+  
+  // Fallback for browsers that don't fire onload
+  setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+  }, 250);
 };
 
 /**
