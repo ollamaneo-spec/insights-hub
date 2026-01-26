@@ -40,13 +40,36 @@ const NPAList = ({ items }: NPAListProps) => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const allItemIds = items.map(item => item.id);
+  const allExpanded = allItemIds.every(id => openItems.includes(id));
+
+  const toggleAll = () => {
+    if (allExpanded) {
+      setOpenItems([]);
+    } else {
+      setOpenItems(allItemIds);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="px-4 py-3 border-b border-border bg-muted/20 mx-3 mt-3 rounded-t-lg border-x shadow-sm">
-        <h2 className="font-bold text-sm text-foreground tracking-tight">Найденные документы</h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          {items.length} документов
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-sm text-foreground tracking-tight">Используемые документы</h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              {items.length} документов
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleAll}
+            className="text-xs h-7 px-2"
+          >
+            {allExpanded ? "Свернуть все" : "Развернуть все"}
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 mx-3 mb-3 border-x border-b border-border rounded-b-lg bg-background shadow-sm">
