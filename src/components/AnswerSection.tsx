@@ -208,8 +208,8 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
   // Initialize editor content when entering edit mode
   useEffect(() => {
     if (isEditing && !prevIsEditingRef.current) {
-      // Entering edit mode - set initial content
-      setEditorContent(segmentsToHtml);
+      // Entering edit mode - use previously edited content if available, otherwise initial
+      setEditorContent(finalHtml || segmentsToHtml);
     }
     
     if (!isEditing && prevIsEditingRef.current && editorContent) {
