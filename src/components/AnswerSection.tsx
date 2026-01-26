@@ -182,6 +182,7 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
   const [isProcessing, setIsProcessing] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const [aiEditedText, setAiEditedText] = useState(false);
+  const [finalHtml, setFinalHtml] = useState<string>("");
   const prevIsEditingRef = useRef(isEditing);
 
   // Convert segments to HTML for editor with proper colors
@@ -213,10 +214,7 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     
     if (!isEditing && prevIsEditingRef.current && editorContent) {
       // Exiting edit mode - save changes back to segments
-      const newSegments = parseHtmlToSegments(editorContent);
-      if (newSegments.length > 0) {
-        setSegments(newSegments);
-      }
+      setFinalHtml(editorContent);
     }
     
     prevIsEditingRef.current = isEditing;
@@ -224,11 +222,8 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
 
   // Autosave handler - saves segments from current editor content
   const handleAutoSave = useCallback((content: string) => {
-    const newSegments = parseHtmlToSegments(content);
-    if (newSegments.length > 0) {
-      setSegments(newSegments);
-      console.log("Content autosaved to segments");
-    }
+    setFinalHtml(content);
+    console.log("Content autosaved");
   }, []);
 
   const getSegmentClassName = (type: SegmentType): string => {
@@ -323,13 +318,23 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     return (
       <div className="h-full flex flex-col">
         <RichTextEditor
-          content={editorContent || segmentsToHtml}
+          content={editorContent || finalHtml || segmentsToHtml}
           onChange={handleEditorChange}
           onAutoSave={handleAutoSave}
           autoColorUserText={true}
           autoSaveDelay={1500}
         />
       </div>
+    );
+  }
+
+  // If we have edited HTML, render it directly
+  if (finalHtml) {
+    return (
+      <div
+        className="space-y-4 cursor-text select-text prose prose-sm max-w-none"
+        dangerouslySetInnerHTML={{ __html: finalHtml }}
+      />
     );
   }
 
