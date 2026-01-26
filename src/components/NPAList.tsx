@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronDown, ChevronRight, ExternalLink, Copy, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, ExternalLink, Copy, Check, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,6 +29,7 @@ const NPAList = ({ items }: NPAListProps) => {
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [openParagraphs, setOpenParagraphs] = useState<string[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleItem = (id: string) => {
     setOpenItems((prev) =>
@@ -47,9 +49,36 @@ const NPAList = ({ items }: NPAListProps) => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const allItemIds = items.map(item => item.id);
-  const allParagraphIds = items.flatMap(item => item.paragraphs.map(p => p.id));
-  const allExpanded = allItemIds.every(id => openItems.includes(id)) && 
+  // Filter items based on search query
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items;
+    
+    const query = searchQuery.toLowerCase();
+    
+    return items
+      .map((item) => {
+        const titleMatch = item.title.toLowerCase().includes(query);
+        const matchingParagraphs = item.paragraphs.filter(
+          (p) =>
+            p.number.toLowerCase().includes(query) ||
+            p.text.toLowerCase().includes(query)
+        );
+
+        // If title matches, show all paragraphs; otherwise show only matching paragraphs
+        if (titleMatch) {
+          return item;
+        } else if (matchingParagraphs.length > 0) {
+          return { ...item, paragraphs: matchingParagraphs };
+        }
+        return null;
+      })
+      .filter((item): item is NPAItem => item !== null);
+  }, [items, searchQuery]);
+
+  const allItemIds = filteredItems.map(item => item.id);
+  const allParagraphIds = filteredItems.flatMap(item => item.paragraphs.map(p => p.id));
+  const allExpanded = allItemIds.length > 0 && 
+                      allItemIds.every(id => openItems.includes(id)) && 
                       allParagraphIds.every(id => openParagraphs.includes(id));
 
   const toggleAll = () => {
@@ -62,10 +91,14 @@ const NPAList = ({ items }: NPAListProps) => {
     }
   };
 
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="px-4 py-3 border-b border-border bg-muted/20 mx-3 mt-3 rounded-t-lg border-x shadow-sm">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <h2 className="font-bold text-sm text-foreground tracking-tight">Используемые документы</h2>
           <Button
             variant="ghost"
@@ -76,11 +109,35 @@ const NPAList = ({ items }: NPAListProps) => {
             {allExpanded ? "Свернуть все" : "Развернуть все"}
           </Button>
         </div>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            placeholder="Поиск по документам и пунктам..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-8 pl-8 pr-8 text-xs"
+          />
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={clearSearch}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 hover:bg-accent/80"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
       </div>
 
       <ScrollArea className="flex-1 mx-3 mb-3 border-x border-b border-border rounded-b-lg bg-background shadow-sm">
         <div className="p-3 space-y-2">
-          {items.map((item) => (
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground text-sm">
+              Ничего не найдено
+            </div>
+          ) : (
+            filteredItems.map((item) => (
             <Collapsible
               key={item.id}
               open={openItems.includes(item.id)}
@@ -129,7 +186,8 @@ const NPAList = ({ items }: NPAListProps) => {
                 </CollapsibleContent>
               </div>
             </Collapsible>
-          ))}
+          ))
+          )}
         </div>
       </ScrollArea>
     </div>
