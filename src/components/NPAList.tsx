@@ -66,12 +66,7 @@ const NPAList = ({ items }: NPAListProps) => {
     <div className="h-full flex flex-col bg-card">
       <div className="px-4 py-3 border-b border-border bg-muted/20 mx-3 mt-3 rounded-t-lg border-x shadow-sm">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-bold text-sm text-foreground tracking-tight">Используемые документы</h2>
-            <p className="text-xs text-muted-foreground mt-1">
-              {items.length} документов
-            </p>
-          </div>
+          <h2 className="font-bold text-sm text-foreground tracking-tight">Используемые документы</h2>
           <Button
             variant="ghost"
             size="sm"
