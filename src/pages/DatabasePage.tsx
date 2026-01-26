@@ -3,7 +3,7 @@ import { ArrowLeft, ExternalLink, FileText, Search, X, ArrowUpDown, ArrowUp, Arr
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import {
   Select,
   SelectContent,
@@ -277,30 +277,51 @@ const DatabasePage = () => {
     </button>
   );
 
-  const exportToExcel = () => {
-    const exportData = filteredAndSortedData.map((item) => ({
-      "ID Обращения": item.id,
-      "Суть обращения": item.summary,
-      "ID Ответа": item.answerId,
-      "Комментарии": item.comments,
-      "Статус": item.status,
-    }));
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Обращения");
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Обращения");
-    
-    // Auto-width columns
-    const colWidths = [
-      { wch: 18 }, // ID Обращения
-      { wch: 60 }, // Суть обращения
-      { wch: 18 }, // ID Ответа
-      { wch: 40 }, // Комментарии
-      { wch: 15 }, // Статус
+    // Add header row
+    worksheet.columns = [
+      { header: "ID Обращения", key: "id", width: 18 },
+      { header: "Суть обращения", key: "summary", width: 60 },
+      { header: "ID Ответа", key: "answerId", width: 18 },
+      { header: "Комментарии", key: "comments", width: 40 },
+      { header: "Статус", key: "status", width: 15 },
     ];
-    worksheet["!cols"] = colWidths;
 
-    XLSX.writeFile(workbook, `Обращения_${new Date().toISOString().split("T")[0]}.xlsx`);
+    // Style header row
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFF0F0F0" },
+    };
+
+    // Add data rows
+    filteredAndSortedData.forEach((item) => {
+      worksheet.addRow({
+        id: item.id,
+        summary: item.summary,
+        answerId: item.answerId,
+        comments: item.comments,
+        status: item.status,
+      });
+    });
+
+    // Generate and download file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Обращения_${new Date().toISOString().split("T")[0]}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
   };
 
   const exportToDocx = () => {
