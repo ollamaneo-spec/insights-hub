@@ -1,7 +1,15 @@
-import { useState } from "react";
-import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ArrowLeft, ExternalLink, FileText, Search, X, ArrowUpDown, ArrowUp, ArrowDown, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -147,14 +155,120 @@ const syntheticData: Appeal[] = [
   },
 ];
 
+type SortField = "id" | "summary" | "answerId" | "comments" | "status" | null;
+type SortDirection = "asc" | "desc";
+
 const DatabasePage = () => {
   const [documentsDialogOpen, setDocumentsDialogOpen] = useState(false);
   const [selectedAppealId, setSelectedAppealId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   const handleOpenDocuments = (appealId: string) => {
     setSelectedAppealId(appealId);
     setDocumentsDialogOpen(true);
   };
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      if (sortDirection === "asc") {
+        setSortDirection("desc");
+      } else {
+        setSortField(null);
+        setSortDirection("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    setSortField(null);
+    setSortDirection("asc");
+  };
+
+  const hasActiveFilters = searchQuery || statusFilter !== "all" || sortField !== null;
+
+  const filteredAndSortedData = useMemo(() => {
+    let result = [...syntheticData];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((item) =>
+        item.summary.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by status
+    if (statusFilter !== "all") {
+      result = result.filter((item) => item.status === statusFilter);
+    }
+
+    // Sort
+    if (sortField) {
+      result.sort((a, b) => {
+        let aValue: string;
+        let bValue: string;
+
+        switch (sortField) {
+          case "id":
+            aValue = a.id;
+            bValue = b.id;
+            break;
+          case "summary":
+            aValue = a.summary;
+            bValue = b.summary;
+            break;
+          case "answerId":
+            aValue = a.answerId;
+            bValue = b.answerId;
+            break;
+          case "comments":
+            aValue = a.comments;
+            bValue = b.comments;
+            break;
+          case "status":
+            aValue = a.status;
+            bValue = b.status;
+            break;
+          default:
+            return 0;
+        }
+
+        const comparison = aValue.localeCompare(bValue, "ru");
+        return sortDirection === "asc" ? comparison : -comparison;
+      });
+    }
+
+    return result;
+  }, [searchQuery, statusFilter, sortField, sortDirection]);
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="h-3 w-3 ml-1" />
+    ) : (
+      <ArrowDown className="h-3 w-3 ml-1" />
+    );
+  };
+
+  const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+    <button
+      onClick={() => handleSort(field)}
+      className="flex items-center hover:text-foreground transition-colors"
+    >
+      {children}
+      <SortIcon field={field} />
+    </button>
+  );
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -172,23 +286,86 @@ const DatabasePage = () => {
         </div>
       </header>
 
+      {/* Filters */}
+      <div className="px-4 pt-4 pb-2 flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[250px] max-w-[400px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Поиск по сути обращения..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 pr-9"
+          />
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Фильтр по статусу" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Все статусы</SelectItem>
+            <SelectItem value="В работе">В работе</SelectItem>
+            <SelectItem value="На рассмотрении">На рассмотрении</SelectItem>
+            <SelectItem value="Утвержден">Утвержден</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {hasActiveFilters && (
+          <Button variant="outline" onClick={resetFilters} className="gap-2">
+            <RotateCcw className="h-4 w-4" />
+            Сбросить фильтры
+          </Button>
+        )}
+
+        <span className="text-sm text-muted-foreground ml-auto">
+          Найдено: {filteredAndSortedData.length}
+        </span>
+      </div>
+
       {/* Table Content */}
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 pt-2">
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[140px]">ID Обращения</TableHead>
-                <TableHead className="min-w-[300px]">Суть обращения</TableHead>
+                <TableHead className="w-[140px]">
+                  <SortableHeader field="id">ID Обращения</SortableHeader>
+                </TableHead>
+                <TableHead className="min-w-[300px]">
+                  <SortableHeader field="summary">Суть обращения</SortableHeader>
+                </TableHead>
                 <TableHead className="w-[100px]">Документы</TableHead>
-                <TableHead className="w-[140px]">ID Ответа</TableHead>
-                <TableHead className="min-w-[200px]">Комментарии</TableHead>
-                <TableHead className="w-[130px]">Статус</TableHead>
+                <TableHead className="w-[140px]">
+                  <SortableHeader field="answerId">ID Ответа</SortableHeader>
+                </TableHead>
+                <TableHead className="min-w-[200px]">
+                  <SortableHeader field="comments">Комментарии</SortableHeader>
+                </TableHead>
+                <TableHead className="w-[130px]">
+                  <SortableHeader field="status">Статус</SortableHeader>
+                </TableHead>
                 <TableHead className="w-[100px]">Письмо</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {syntheticData.map((appeal) => (
+              {filteredAndSortedData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    Ничего не найдено
+                  </TableCell>
+                </TableRow>
+              ) : (
+              filteredAndSortedData.map((appeal) => (
                 <TableRow key={appeal.id}>
                   <TableCell className="font-mono text-xs">{appeal.id}</TableCell>
                   <TableCell className="text-sm">
@@ -229,7 +406,8 @@ const DatabasePage = () => {
                     </a>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))
+              )}
             </TableBody>
           </Table>
         </div>
