@@ -26,10 +26,17 @@ interface NPAListProps {
 
 const NPAList = ({ items }: NPAListProps) => {
   const [openItems, setOpenItems] = useState<string[]>([]);
+  const [openParagraphs, setOpenParagraphs] = useState<string[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const toggleItem = (id: string) => {
     setOpenItems((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleParagraph = (id: string) => {
+    setOpenParagraphs((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
@@ -41,13 +48,17 @@ const NPAList = ({ items }: NPAListProps) => {
   };
 
   const allItemIds = items.map(item => item.id);
-  const allExpanded = allItemIds.every(id => openItems.includes(id));
+  const allParagraphIds = items.flatMap(item => item.paragraphs.map(p => p.id));
+  const allExpanded = allItemIds.every(id => openItems.includes(id)) && 
+                      allParagraphIds.every(id => openParagraphs.includes(id));
 
   const toggleAll = () => {
     if (allExpanded) {
       setOpenItems([]);
+      setOpenParagraphs([]);
     } else {
       setOpenItems(allItemIds);
+      setOpenParagraphs(allParagraphIds);
     }
   };
 
@@ -115,6 +126,8 @@ const NPAList = ({ items }: NPAListProps) => {
                         copiedId={copiedId}
                         onCopy={copyToClipboard}
                         link={item.link}
+                        isOpen={openParagraphs.includes(paragraph.id)}
+                        onToggle={() => toggleParagraph(paragraph.id)}
                       />
                     ))}
                   </div>
@@ -137,13 +150,13 @@ interface ParagraphItemPropsExtended {
   copiedId: string | null;
   onCopy: (text: string, id: string) => void;
   link?: string;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-const ParagraphItem = ({ paragraph, copiedId, onCopy, link }: ParagraphItemPropsExtended) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const ParagraphItem = ({ paragraph, copiedId, onCopy, link, isOpen, onToggle }: ParagraphItemPropsExtended) => {
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={onToggle}>
       <div className="border-b border-border/40 last:border-b-0">
         <CollapsibleTrigger asChild>
           <button className="w-full text-left px-4 py-2.5 hover:bg-muted/30 transition-colors flex items-center gap-2.5">
