@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Pencil, Download, CheckCircle } from "lucide-react";
+import { Pencil, Download, CheckCircle, FileText, File } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,18 +15,65 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { exportToPdf, exportToDocx } from "@/utils/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 
 interface ActionButtonsProps {
   onEditMode?: () => void;
   isEditing?: boolean;
+  getAnswerContent?: () => string;
 }
 
-const ActionButtons = ({ onEditMode, isEditing = false }: ActionButtonsProps) => {
+const ActionButtons = ({ onEditMode, isEditing = false, getAnswerContent }: ActionButtonsProps) => {
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
 
-  const handleDownload = (format: "docx" | "pdf") => {
-    console.log(`Скачивание в формате ${format}`);
-    // TODO: Implement actual download logic
+  const handleDownload = async (format: "docx" | "pdf") => {
+    if (!getAnswerContent) {
+      toast({
+        title: "Ошибка",
+        description: "Контент для экспорта недоступен",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const content = getAnswerContent();
+    if (!content) {
+      toast({
+        title: "Ошибка",
+        description: "Нет содержимого для экспорта",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    
+    try {
+      const fileName = `Ответ_${new Date().toISOString().slice(0, 10)}`;
+      
+      if (format === "pdf") {
+        await exportToPdf(content, fileName);
+      } else {
+        exportToDocx(content, fileName);
+      }
+      
+      toast({
+        title: "Успешно",
+        description: `Файл ${format.toUpperCase()} успешно скачан`,
+      });
+    } catch (error) {
+      console.error("Export error:", error);
+      toast({
+        title: "Ошибка экспорта",
+        description: "Не удалось экспортировать файл",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleApprove = () => {
@@ -49,16 +96,31 @@ const ActionButtons = ({ onEditMode, isEditing = false }: ActionButtonsProps) =>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2 h-9 text-xs font-medium shadow-sm">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 h-9 text-xs font-medium shadow-sm"
+              disabled={isExporting}
+            >
               <Download className="h-4 w-4" />
-              Скачать
+              {isExporting ? "Экспорт..." : "Скачать"}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="shadow-lg">
-            <DropdownMenuItem onClick={() => handleDownload("docx")} className="cursor-pointer">
+            <DropdownMenuItem 
+              onClick={() => handleDownload("docx")} 
+              className="cursor-pointer gap-2"
+              disabled={isExporting}
+            >
+              <FileText className="h-4 w-4" />
               Скачать в DOCX
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload("pdf")} className="cursor-pointer">
+            <DropdownMenuItem 
+              onClick={() => handleDownload("pdf")} 
+              className="cursor-pointer gap-2"
+              disabled={isExporting}
+            >
+              <File className="h-4 w-4" />
               Скачать в PDF
             </DropdownMenuItem>
           </DropdownMenuContent>

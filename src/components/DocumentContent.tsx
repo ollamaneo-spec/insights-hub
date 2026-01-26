@@ -1,13 +1,13 @@
-import { useState } from "react";
-import AnswerSection from "./AnswerSection";
+import { forwardRef } from "react";
+import AnswerSection, { AnswerSectionHandle } from "./AnswerSection";
 import SectionBlock from "./SectionBlock";
 
 interface DocumentContentProps {
   isEditing?: boolean;
 }
 
-const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
-  const [appealText, setAppealText] = useState(`В связи с вступлением в силу новых обязательных и дополнительных реквизитов кассового чека, утвержденных приказом ФНС от 26.03.2025 № ЕД-7-20/336@ и вступающих в силу в несколько этапов в зависимости от реализуемой продукции, просим предоставить разъяснения по следующим вопросам:
+const DocumentContent = forwardRef<AnswerSectionHandle, DocumentContentProps>(({ isEditing = false }, ref) => {
+  const appealText = `В связи с вступлением в силу новых обязательных и дополнительных реквизитов кассового чека, утвержденных приказом ФНС от 26.03.2025 № ЕД-7-20/336@ и вступающих в силу в несколько этапов в зависимости от реализуемой продукции, просим предоставить разъяснения по следующим вопросам:
 
 1. Тег 1125 "признаки расчетов в "Интернет"*
 Какие основания/индивидуальным предпринимателем обязан указывать тег 1125 "Признаки расчета в "Интернет"* в кассовом чеке? Обязательно ли указывать исключительно предпринимателю/ организации которые имеют Интернет, или только тем, кто продает товары, подходящие под маркировку?
@@ -17,11 +17,9 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
 
 3. Применяется ли тег 1236 только к маркированным товарам или его использование распространяется на все товары/услуги, отпущенные безналичным способом?
 
-4. Каким образом следует заполнять поле "место расчетов" (тег 1187) при осуществлении расчетов через интернет-магазин?`);
+4. Каким образом следует заполнять поле "место расчетов" (тег 1187) при осуществлении расчетов через интернет-магазин?`;
 
-  const [essenceText, setEssenceText] = useState(
-    "Разъяснение об обязательности применения новых реквизитов кассового чека (теги 1125, 1230, 1234, 1236) для онлайн-платежей и безналичных расчетов согласно приказу ФНС от 26.03.2025 № ЕД-7-20/336@."
-  );
+  const essenceText = "Разъяснение об обязательности применения новых реквизитов кассового чека (теги 1125, 1230, 1234, 1236) для онлайн-платежей и безналичных расчетов согласно приказу ФНС от 26.03.2025 № ЕД-7-20/336@.";
 
   return (
     <div className="flex flex-col h-full px-4 py-1 gap-0">
@@ -58,10 +56,12 @@ const DocumentContent = ({ isEditing = false }: DocumentContentProps) => {
         resizable
         defaultHeight={280}
       >
-        <AnswerSection isEditing={isEditing} />
+        <AnswerSection ref={ref} isEditing={isEditing} />
       </SectionBlock>
     </div>
   );
-};
+});
+
+DocumentContent.displayName = "DocumentContent";
 
 export default DocumentContent;

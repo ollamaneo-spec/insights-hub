@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import Header from "@/components/Header";
 import FileUploadBar from "@/components/FileUploadBar";
 import TabPanel from "@/components/TabPanel";
@@ -14,6 +14,7 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
+import { AnswerSectionHandle } from "@/components/AnswerSection";
 
 const sampleNPAItems = [
   {
@@ -83,10 +84,15 @@ const sampleNPAItems = [
 const Index = () => {
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const answerSectionRef = useRef<AnswerSectionHandle>(null);
 
   const handleFilesSelected = (files: FileList) => {
     console.log("Файлы загружены:", Array.from(files).map(f => f.name));
   };
+
+  const getAnswerContent = useCallback(() => {
+    return answerSectionRef.current?.getContent() || "";
+  }, []);
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -101,13 +107,14 @@ const Index = () => {
             
             {/* Document Content - scrollable area */}
             <div className="flex-1 overflow-auto min-h-0">
-              <DocumentContent isEditing={isEditing} />
+              <DocumentContent ref={answerSectionRef} isEditing={isEditing} />
             </div>
             
             {/* Action Buttons - fixed at bottom */}
             <ActionButtons 
               onEditMode={() => setIsEditing(!isEditing)} 
               isEditing={isEditing}
+              getAnswerContent={getAnswerContent}
             />
             
             {/* Comments Section at bottom */}
