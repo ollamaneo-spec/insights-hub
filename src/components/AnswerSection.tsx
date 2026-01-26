@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -167,12 +167,16 @@ const parseHtmlToSegments = (html: string): TextSegment[] => {
   return segments;
 };
 
+export interface AnswerSectionHandle {
+  getContent: () => string;
+}
+
 interface AnswerSectionProps {
   isEditing?: boolean;
   onEditingChange?: (isEditing: boolean) => void;
 }
 
-const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProps) => {
+const AnswerSection = forwardRef<AnswerSectionHandle, AnswerSectionProps>(({ isEditing = false, onEditingChange }, ref) => {
   const [segments, setSegments] = useState<TextSegment[]>(initialSegments);
   const [selectedText, setSelectedText] = useState("");
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null);
@@ -205,7 +209,15 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
       .join("");
   }, [segments]);
 
-  // Initialize editor content when entering edit mode
+  // Expose getContent method via ref
+  useImperativeHandle(ref, () => ({
+    getContent: () => {
+      // Return the most current content: editorContent if editing, finalHtml if edited, or generated HTML
+      if (editorContent) return editorContent;
+      if (finalHtml) return finalHtml;
+      return segmentsToHtml;
+    }
+  }), [editorContent, finalHtml, segmentsToHtml]);
   useEffect(() => {
     if (isEditing && !prevIsEditingRef.current) {
       // Entering edit mode - use previously edited content if available, otherwise initial
@@ -412,6 +424,8 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
       </Dialog>
     </>
   );
-};
+});
+
+AnswerSection.displayName = "AnswerSection";
 
 export default AnswerSection;
