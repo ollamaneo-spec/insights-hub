@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { ArrowLeft, ExternalLink, FileText, Search, X, ArrowUpDown, ArrowUp, ArrowDown, RotateCcw } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, Search, X, ArrowUpDown, ArrowUp, ArrowDown, RotateCcw, Download, FileSpreadsheet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import * as XLSX from "xlsx";
 import {
   Select,
   SelectContent,
@@ -10,6 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -270,6 +277,88 @@ const DatabasePage = () => {
     </button>
   );
 
+  const exportToExcel = () => {
+    const exportData = filteredAndSortedData.map((item) => ({
+      "ID Обращения": item.id,
+      "Суть обращения": item.summary,
+      "ID Ответа": item.answerId,
+      "Комментарии": item.comments,
+      "Статус": item.status,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Обращения");
+    
+    // Auto-width columns
+    const colWidths = [
+      { wch: 18 }, // ID Обращения
+      { wch: 60 }, // Суть обращения
+      { wch: 18 }, // ID Ответа
+      { wch: 40 }, // Комментарии
+      { wch: 15 }, // Статус
+    ];
+    worksheet["!cols"] = colWidths;
+
+    XLSX.writeFile(workbook, `Обращения_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
+  const exportToDocx = () => {
+    const tableRows = filteredAndSortedData
+      .map(
+        (item) => `
+        <tr>
+          <td style="border: 1px solid #000; padding: 8px;">${item.id}</td>
+          <td style="border: 1px solid #000; padding: 8px;">${item.summary}</td>
+          <td style="border: 1px solid #000; padding: 8px;">${item.answerId}</td>
+          <td style="border: 1px solid #000; padding: 8px;">${item.comments}</td>
+          <td style="border: 1px solid #000; padding: 8px;">${item.status}</td>
+        </tr>`
+      )
+      .join("");
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Список обращений</title>
+        </head>
+        <body>
+          <h1 style="font-family: Arial, sans-serif;">Список обращений</h1>
+          <p style="font-family: Arial, sans-serif; color: #666;">Дата выгрузки: ${new Date().toLocaleDateString("ru-RU")}</p>
+          <table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; font-size: 12px;">
+            <thead>
+              <tr style="background-color: #f0f0f0;">
+                <th style="border: 1px solid #000; padding: 8px; text-align: left;">ID Обращения</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Суть обращения</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left;">ID Ответа</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Комментарии</th>
+                <th style="border: 1px solid #000; padding: 8px; text-align: left;">Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob(
+      ["\ufeff", htmlContent],
+      { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
+    );
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Обращения_${new Date().toISOString().split("T")[0]}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -327,9 +416,30 @@ const DatabasePage = () => {
           </Button>
         )}
 
-        <span className="text-sm text-muted-foreground ml-auto">
-          Найдено: {filteredAndSortedData.length}
-        </span>
+        <div className="ml-auto flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Выгрузить
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportToDocx} className="gap-2 cursor-pointer">
+                <FileText className="h-4 w-4" />
+                Скачать DOCX
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportToExcel} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="h-4 w-4" />
+                Скачать Excel
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <span className="text-sm text-muted-foreground">
+            Найдено: {filteredAndSortedData.length}
+          </span>
+        </div>
       </div>
 
       {/* Table Content */}
