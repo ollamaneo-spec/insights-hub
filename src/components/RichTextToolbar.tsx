@@ -37,6 +37,17 @@ const fontFamilies = [
   { value: "Verdana", label: "Verdana" },
 ];
 
+const fontSizes = [
+  { value: "12px", label: "12" },
+  { value: "14px", label: "14" },
+  { value: "16px", label: "16" },
+  { value: "18px", label: "18" },
+  { value: "20px", label: "20" },
+  { value: "24px", label: "24" },
+  { value: "28px", label: "28" },
+  { value: "32px", label: "32" },
+];
+
 const RichTextToolbar = ({ editor }: RichTextToolbarProps) => {
   if (!editor) return null;
 
@@ -92,6 +103,25 @@ const RichTextToolbar = ({ editor }: RichTextToolbarProps) => {
               style={{ fontFamily: font.value }}
             >
               {font.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* Font Size */}
+      <Select
+        value={editor.getAttributes("textStyle").fontSize || "16px"}
+        onValueChange={(value) =>
+          editor.chain().focus().setFontSize(value).run()
+        }
+      >
+        <SelectTrigger className="w-[80px] h-8 text-xs">
+          <SelectValue placeholder="Размер" />
+        </SelectTrigger>
+        <SelectContent>
+          {fontSizes.map((size) => (
+            <SelectItem key={size.value} value={size.value}>
+              {size.label}
             </SelectItem>
           ))}
         </SelectContent>
