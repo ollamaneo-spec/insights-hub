@@ -147,20 +147,10 @@ const parseHtmlToSegments = (html: string): TextSegment[] => {
   const paragraphs = body.querySelectorAll("p");
 
   paragraphs.forEach((p) => {
-    // Build text preserving <br> as \n
-    let text = "";
-    p.childNodes.forEach((node) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        text += node.textContent || "";
-      } else if (node.nodeName === "BR") {
-        text += "\n";
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        // keep element text, but ignore its markup here
-        text += (node as HTMLElement).textContent || "";
-      }
-    });
+    // Get the full HTML of the paragraph, preserving all formatting
+    const innerHTML = p.innerHTML;
 
-    if (!text.trim()) return;
+    if (!innerHTML.trim() || !p.textContent?.trim()) return;
 
     const pColor = extractInlineColor(p);
     const innerColored = p.querySelector("[style*='color']");
@@ -170,7 +160,7 @@ const parseHtmlToSegments = (html: string): TextSegment[] => {
     segments.push({
       id: `seg-${segmentIndex++}`,
       type,
-      text,
+      text: innerHTML, // Store full HTML to preserve formatting
     });
   });
 
@@ -199,8 +189,17 @@ const AnswerSection = ({ isEditing = false, onEditingChange }: AnswerSectionProp
     return segments
       .map((seg) => {
         const color = SEGMENT_COLORS[seg.type];
-        const textWithBreaks = seg.text.replace(/\n/g, "<br>");
-        return `<p><span style="color: ${color};">${textWithBreaks}</span></p>`;
+        // Check if seg.text is already HTML (contains tags)
+        const isHtml = /<[^>]+>/.test(seg.text);
+        
+        if (isHtml) {
+          // Text already contains HTML, wrap entire paragraph with color
+          return `<p style="color: ${color};">${seg.text}</p>`;
+        } else {
+          // Plain text, convert line breaks and wrap
+          const textWithBreaks = seg.text.replace(/\n/g, "<br>");
+          return `<p><span style="color: ${color};">${textWithBreaks}</span></p>`;
+        }
       })
       .join("");
   }, [segments]);

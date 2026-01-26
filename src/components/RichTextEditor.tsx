@@ -5,8 +5,58 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
+import { Extension } from "@tiptap/core";
 import RichTextToolbar from "./RichTextToolbar";
 import { useEffect, useRef, useCallback } from "react";
+
+// Custom FontSize extension
+const FontSize = Extension.create({
+  name: "fontSize",
+  addOptions() {
+    return {
+      types: ["textStyle"],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) =>
+              element.style.fontSize?.replace(/['"]+/g, ""),
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) {
+                return {};
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontSize:
+        (fontSize: string) =>
+        ({ chain }) => {
+          return chain().setMark("textStyle", { fontSize }).run();
+        },
+      unsetFontSize:
+        () =>
+        ({ chain }) => {
+          return chain()
+            .setMark("textStyle", { fontSize: null })
+            .removeEmptyTextStyle()
+            .run();
+        },
+    };
+  },
+});
 
 // Black color for user edits
 const USER_COLOR = "hsl(0, 0%, 15%)";
@@ -69,6 +119,7 @@ const RichTextEditor = ({
       Underline,
       TextStyle,
       FontFamily,
+      FontSize,
       Color,
       TextAlign.configure({
         types: ["heading", "paragraph"],
